@@ -22,11 +22,11 @@ Novalnet <a href="https://www.novalnet.de/"> merchant account </a> is required f
 For detailed documentation and other technical inquiries, please send us an email to technic@novalnet.de.
 ## Integrated payment methods
 - <a href="https://www.novalnet.de/sepa-lastschrift">Direct Debit SEPA </a>
-- <a href="https://www.novalnet.de/zahlungsart-kreditkarte">Credit Card </a>
+- <a href="https://www.novalnet.de/zahlungsart-kreditkarte">Credit/Debit Cards </a>
 - <a href="https://www.novalnet.de/kauf-auf-rechnung-online-payment">Invoice</a>
 - <a href="https://www.novalnet.de/vorkasse-internet-payment">Prepayment </a>
 - <a href="https://www.novalnet.de/barzahlen">Barzahlen/viacash </a>
-- <a href="https://www.novalnet.de/online-ueberweisung-sofortueberweisung">Instant Bank Transfer </a>
+- <a href="https://www.novalnet.de/online-ueberweisung-sofortueberweisung">Sofort </a>
 - <a href="https://www.novalnet.de/mit-paypal-weltweit-sicher-verkaufen">PayPal </a>
 - <a href="https://www.novalnet.de/ideal-online-ueberweisung">iDEAL </a>
 - <a href="https://www.novalnet.de/eps-online-ueberweisung">eps </a>
