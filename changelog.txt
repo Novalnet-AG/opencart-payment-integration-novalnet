@@ -1,5 +1,15 @@
 *** Changelog ***
 
+= 11.3.2 - 2021.08.03 =
+*New      - Implemented enforce 3D secure payment for countries outside EU
+*New      - Implemented Payment duration for Prepayment
+*Enhanced - Callback has been optimized as per the new testcase
+*Removed  - PIN by callback and PIN by SMS for Direct Debit SEPA and Invoice payment methods
+*Removed  - BIC field for Direct Debit SEPA
+*Removed  - Proxy server configuration
+*Removed  - Gateway timeout configuration
+*Removed  - Referrer Id configuration
+
 = 11.3.1 - 2021.03.23 =
 * Fix       - Chrome Samesite Cookies
 * Enhanced  - Barzahlen payment name and logo
