@@ -1,0 +1,226 @@
+{{ header }} {{ column_left }}
+<div id="content">
+	<div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-novalnet-cc" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+            </div>
+            <h1>{{ novalnet_heading_title }} {{ logo_novalnet_cc }}</h1>
+            <ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+				<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+		{% if error_warning %}		
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %}
+        <div class="panel panel-default">
+			<div class="panel-body">
+				<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-novalnet-cc" class="form-horizontal">
+					<ul class="nav nav-tabs">
+                        <li class="active"><a href="#tab-configuration" data-toggle="tab">{{ novalnet_heading_title }}</a></li>
+                        <li><a href="#tab-cc-iframe-configuration" data-toggle="tab">{{ text_iframe_form_appearance }}</a></li>
+                    </ul>
+                    <div class="tab-content">
+						<div class="tab-pane active" id="tab-configuration">
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="select-enable-payment">{{ entry_enable_payment }}</label>
+								<div class="col-sm-10">
+									<select id="select-enable-payment" name="payment_novalnet_cc_status" class="form-control">
+										<option value="1" {% if payment_novalnet_cc_status == 1 %} selected="selected" {% endif %} >{{ text_enabled }}</option>
+										<option value="0" {% if payment_novalnet_cc_status == 0 %} selected="selected" {% endif %} >{{ text_disabled }}</option>
+									</select>
+								</div>
+							</div>
+							
+							<div class="form-group">
+                                <label class="col-sm-2 control-label" for="select-test-mode"><span data-toggle="tooltip" title="{{ test_mode_desc }}">{{ enable_test_mode }}</span></label>
+                                <div class="col-sm-10">
+                                    <select id="select-test-mode" name="payment_novalnet_cc_testmode" class="form-control">
+                                        <option value="1" {% if payment_novalnet_cc_testmode == 1 %} selected="selected" {% endif %}>{{ text_true }}</option>
+                                        <option value="0" {% if payment_novalnet_cc_testmode == 0 %} selected="selected" {% endif %} >{{ text_false }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="select-shopping-type"><span data-toggle="tooltip" title="{{ shopping_type_desc }}">{{ shopping_type }}</span></label>
+                                <div class="col-sm-10">
+                                    <select name="payment_novalnet_cc_shopping_type" id="input-payment-novalnet-cc-shopping-type" class="form-control">
+                                        <option value="none" {% if payment_novalnet_cc_shopping_type == 'none' %} selected="selected" {% endif %} >{{ shopping_type_none }}</option>
+                                        <option value="ONE_CLICK" {% if payment_novalnet_cc_shopping_type == 'ONE_CLICK' %} selected="selected" {% endif %}>{{ one_click_shopping }}</option>
+                                        <option value="ZERO_AMOUNT" {% if payment_novalnet_cc_shopping_type == 'ZERO_AMOUNT' %} selected="selected" {% endif %}>{{ zero_amount_booking }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="select-enable-3d"><span data-toggle="tooltip" title="{{ entry_enable_3d_desc }}">{{ entry_enable_3d }}</span></label>
+                                <div class="col-sm-10">
+                                    <select id="select-enable-3d" name="payment_novalnet_cc_3d_enable" class="form-control">
+                                        <option value="no" {% if payment_novalnet_cc_3d_enable == 'no' %} selected="selected" {% endif %} >{{ text_false }}</option>
+                                        <option value="yes" {% if payment_novalnet_cc_3d_enable == 'yes' %} selected="selected" {% endif %} >{{ text_true }}</option>                                        
+                                    </select>
+                                </div>
+                            </div>
+							<div class="form-group">
+                                <label class="col-sm-2 control-label" for="select-enable-force-3d"><span data-toggle="tooltip" title="{{ entry_force_enable_3d_desc }}">{{ entry_force_enable_3d }}</span></label>
+                                <div class="col-sm-10">
+                                    <select id="select-enable-force-3d" name="payment_novalnet_cc_force_3d_enable" class="form-control">
+                                        <option value="no" {% if payment_novalnet_cc_force_3d_enable == 'no' %} selected="selected" {% endif %} >{{ text_false }}</option>
+                                        <option value="yes" {% if payment_novalnet_cc_force_3d_enable == 'yes' %} selected="selected" {% endif %} >{{ text_true }}</option>                                        
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="select-display-amex-logo"><span data-toggle="tooltip" title="{{ entry_display_amex_logo_desc }}">{{ entry_display_amex_logo }}</span></label>
+                                <div class="col-sm-10">
+                                    <select id="select-display-amex-logo" name="payment_novalnet_cc_display_amex" class="form-control">
+                                        <option value="no" {% if payment_novalnet_cc_display_amex == 'no' %} selected="selected" {% endif %}>{{ text_false }}</option>
+                                        <option value="yes" {% if payment_novalnet_cc_display_amex == 'yes' %} selected="selected" {% endif %}>{{ text_true }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                              <div class="form-group">
+                                <label class="col-sm-2 control-label" for="select-display-maestro-logo"><span data-toggle="tooltip" title="{{ entry_display_maestro_logo_desc }}">{{ entry_display_maestro_logo }}</span></label>
+                                <div class="col-sm-10">
+                                    <select id="select-display-maestro-logo" name="payment_novalnet_cc_display_maestro" class="form-control">
+                                        <option value="no" {% if payment_novalnet_cc_display_maestro == 'no' %}  selected="selected" {% endif %}>{{ text_false }}</option>
+                                        <option value="yes" {% if payment_novalnet_cc_display_maestro == 'yes' %} selected="selected" {% endif %}>{{ text_true }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-cc-authenticate">{{ onhold_payment_action }}</label>
+                                <div class="col-sm-10">
+                                    
+                                    <select name="payment_novalnet_cc_authenticate" id="input-payment-novalnet-authenticate" class="form-control">
+										{% if payment_novalnet_cc_authenticate == "1" %}	
+											<option value="1" selected="selected">{{ authorize }}</option>
+											<option value="0">{{ capture }}</option>
+										{% else %}
+											<option value="1">{{ authorize }}</option>
+											<option value="0" selected="selected">{{ capture }}</option>
+										{% endif %}                                        
+                                    </select>
+                                </div>
+                            </div>
+							<div class="form-group nn_payment_onhold">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-cc-manual-limit"><span data-toggle="tooltip" title="{{ entry_onhold_limit_desc }}">{{ entry_onhold_limit }}</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="input-payment-novalnet-cc-manual-limit" name="payment_novalnet_cc_manual_limit" value="{{ payment_novalnet_cc_manual_limit }}" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="text-notification-buyer"><span data-toggle="tooltip" title="{{ notification_buyer_desc }}">{{ notification_buyer }}</span></label>
+                                <div class="col-sm-10">
+                                    <textarea id="text-notification-buyer" name="payment_novalnet_cc_buyer_notification" cols="50" rows="2" class="form-control">{{ payment_novalnet_cc_buyer_notification }}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="select-order-completion-status">{{ order_completion_status }}</label>
+                                <div class="col-sm-10">
+                                {% if payment_novalnet_cc_order_completion_status is empty %}
+                                {% set payment_novalnet_cc_order_completion_status = 15 %}
+                                {% endif %}
+                                    <select id="select-order-completion-status" name="payment_novalnet_cc_order_completion_status" class="form-control">
+                                        {% for order_status in order_statuses %}
+                                        <option value="{{ order_status.order_status_id }}" {% if order_status.order_status_id == payment_novalnet_cc_order_completion_status %} selected="selected" {% endif %}>{{ order_status.name }}</option>
+                                        {% endfor %}                                        
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-payment-minimum-goods"><span data-toggle="tooltip" title="{{ entry_minimum_goods_desc }}">{{ entry_minimum_goods }}</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="input-payment-payment-minimum-goods" name="payment_novalnet_cc_total" value="{{ payment_novalnet_cc_total }}" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="select-geo-zone"><span data-toggle="tooltip" title="{{ entry_geo_zone_desc }}">{{ entry_geo_zone }}</span></label>
+                                <div class="col-sm-10">
+                                    <select id="select-geo-zone" name="payment_novalnet_cc_geo_zone_id" class="form-control">
+                                        <option value="0">{{ text_all_zones }}</option>
+                                        {% for geo_zone in geo_zones %}
+										<option value="{{ geo_zone.geo_zone_id }}" {% if geo_zone.geo_zone_id == payment_novalnet_cc_geo_zone_id %}  selected="selected" {% endif %} >{{ geo_zone.name }}</option>
+                                        {% endfor %}                                     
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-sort-order"><span data-toggle="tooltip" title="{{ entry_sort_order_desc }}">{{ entry_sort_order }}</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="input-payment-sort-order" name="payment_novalnet_cc_sort_order" value="{{ payment_novalnet_cc_sort_order }}" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                        {{ alert }}
+                        </div>
+                        <div class="tab-pane" id="tab-cc-iframe-configuration">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-iframe-configuration">{{ text_iframe_configuration }}</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-iframe-label">{{ text_iframe_label }}</label>
+                                <div class="col-sm-10">
+									{% if payment_novalnet_cc_iframe_standard_label is not empty %}									
+                                    <textarea id="input-payment-iframe-label" name="payment_novalnet_cc_iframe_standard_label" cols="50" rows="2" class="form-control">{{ payment_novalnet_cc_iframe_standard_label }}</textarea>
+                                    {% else %}
+                                    <textarea id="input-payment-iframe-label" name="payment_novalnet_cc_iframe_standard_label" cols="50" rows="2" class="form-control"></textarea>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-iframe-input">{{ text_iframe_input }}</label>
+                                <div class="col-sm-10">
+									{% if payment_novalnet_cc_iframe_standard_input is not empty %}
+                                    <textarea id="input-payment-iframe-input" name="payment_novalnet_cc_iframe_standard_input" cols="50" rows="2" class="form-control">{{ payment_novalnet_cc_iframe_standard_input }}</textarea>
+                                    {% else %}
+                                    <textarea id="input-payment-iframe-input" name="payment_novalnet_cc_iframe_standard_input" cols="50" rows="2" class="form-control" value='background-color: #fff;background-image: none; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset; color: #555;   font-size: 14px; height: 34px; line-height: 1.42857; padding: 6px 12px; transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s; width: 100%; color: #999; opacity: 1;'>border-color: #cccccc; border-radius: 4px; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset; color: #000; height: 34px; padding: 6px 12px; transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;</textarea>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-iframe-css-text">{{ text_iframe_css_text }}</label>
+                                <div class="col-sm-10">
+									{% if payment_novalnet_cc_iframe_standard_css_text is not empty %}
+                                    <textarea id="input-payment-iframe-css-text" name="payment_novalnet_cc_iframe_standard_css_text" cols="50" rows="2" class="form-control">{{ payment_novalnet_cc_iframe_standard_css_text }}</textarea>
+									{% else %}
+									<textarea id="input-payment-iframe-css-text" name="payment_novalnet_cc_iframe_standard_css_text" cols="50" rows="2" class="form-control">body{ color: #9a9a9a; font-family: sans-serif; font-size: 13px } .input-group{ width: 50%; float:left; margin-bottom: 2px } .label-group{ margin-bottom: 5px; } .form-group{ padding-right: 15px; } .form-group label{ text-transform: uppercase; font-size: 12</textarea>
+									{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+{{ footer }}
+<script>
+
+$(document).ready(function(){    
+       
+       nn_payment_onhold();
+        
+        $('select[name="payment_novalnet_cc_authenticate"]').change(function(){
+            nn_payment_onhold();
+        });
+    });
+    function nn_payment_onhold(){
+    if($('select[name="payment_novalnet_cc_authenticate"] option:selected').val() == 1){
+            $('.nn_payment_onhold').show();
+        } else {
+            $('.nn_payment_onhold').hide();
+        }
+    }
+</script>

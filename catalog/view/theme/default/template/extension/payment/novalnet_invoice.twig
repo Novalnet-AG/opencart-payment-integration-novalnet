@@ -1,0 +1,181 @@
+<form class="form-horizontal">
+	<fieldset id="payment">
+
+	{% if guarantee_payment_force == false  %}
+	{{error_msg}}
+	{% endif %}	
+		<h3>{{ text_title }} {{ payment_logo }}</h3>
+		<p>{{ text_payment_description }}</p>
+		
+		{% if test_mode != "0" %}
+		<p>{{ text_test_mode_description }}</p>
+		{% endif %}		
+
+		{% if buyer_notification is not empty %}    
+		<p>{{ buyer_notification }}</p>
+		{% endif %}
+		
+		<div id="notification">
+			<div class="warning" id="error-msg" style="display:none;width:auto;color:red;"></div>
+		</div>
+		
+		<link rel="stylesheet" type="text/css" href="catalog/view/theme/default/stylesheet/novalnet.css" />
+		<input type="hidden" id="enable-fraud-module" value="{{ enabled_fraud_module }}>" />
+		<input type="hidden" id="process-pin-call" value="{{ process_pin_call }}"/>
+		<div class="content" id="invoice-form">
+			{% if enable_guarantee_payment and guarantee_payment_error == false and company is empty and error_msg is empty  %}
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-novalnet-invoice-dob" style="text-align:left;">
+					{{ dob_label }}
+				</label>
+				<div class="col-sm-10">
+					<input type="text" value="" placeholder="YYYY-MM-DD" id="input-payment-novalnet-invoice-dob" name="payment_novalnet_invoice_dob" class="form-control">
+				</div>
+			</div>
+			{%  elseif guarantee_payment_error %}       
+			<label class="control-label" for="input-novalnet-sepa-guarantee-error" ><span color="red">{{ guarantee_payment_error_text }}</span></label>
+			{% endif %}	
+			{% if show_fraud_module and enable_guarantee_payment == false %}    
+			<div class="form-group required">
+				<label class="col-sm-2 control-label" for="{{ 'input-payment-novalnet-invoice-pin-by-' ~ enabled_fraud_module }}">
+					{{ fraud_check_label }}
+				</label>
+				<div class="col-sm-10">
+					<input type="text" name="{{ 'payment_novalnet_invoice_pinby_' ~ enabled_fraud_module}}" value="{{ fraud_check_value }}" placeholder="{{ fraud_check_label }}" id="{{ 'input-payment-novalnet-invoice-pin-by-' ~ enabled_fraud_module}}" class="form-control" >
+				</div>
+			</div>
+			{% endif %}
+		</div>
+		<div id="display-transaction-pin" style="display: none;">
+			<div class="form-group required">
+				<label class="col-sm-2 control-label" for="input-pin-data">
+					{{ text_fraud_transaction_pin }}
+				</label>
+				<div class="col-sm-10">				
+					<input type="text" name="pin_data" placeholder="{{ text_fraud_transaction_pin }}" id="input-pin-data" class="form-control" >
+				</div>
+            </div>
+            <div class="form-group">
+				<label class="col-sm-2 control-label" for="input-new-pin">{{ text_fraud_forgot_pin }}</label>
+				<div class="col-sm-10">
+					<input type="checkbox" name="new_pin" id="input-new-pin"/>
+				</div>
+			</div>
+        </div>
+        <input type="hidden" id="novalnet-invoice-company-field" name="payment_novalnet_invoice_company" value="{{ company }}"/>
+	</fieldset>
+</form>
+<div class="buttons">
+    <div class="pull-right">
+        <input type="button" value="{{ button_confirm }}" id="button-confirm" class="btn btn-primary" data-loading-text="{{ text_loading }}" />
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        if ($('#input-payment-novalnet-invoice-dob').length) {
+            $('#input-payment-novalnet-invoice-dob').datetimepicker({
+                pickDate: true,
+                pickTime: false,               
+                format: 'YYYY-MM-DD',           
+            });           
+        }
+
+        $('#input-novalnet-invoice-pin-by-callback, #input-novalnet-invoice-pin-by-sms').keypress(function(event){
+            var keycode = ('which' in event) ? event.which : event.keyCode;
+            reg = /^(?:[0-9\s]+$)/;
+            return (reg.test(String.fromCharCode(keycode)) || keycode === 0 || keycode === 8 ) ? true : false;
+        });
+        if($('#enable-fraud-module').val() != undefined && $('#enable-fraud-module').val() != '') {
+            if($('#process-pin-call').val() != undefined && $('#process-pin-call').val() != '') {
+                $('#invoice-form').hide();
+                $('#display-transaction-pin').show();
+            } else {
+                $('#invoice-form').show();
+                $('#display-transaction-pin').hide();
+            }
+        }
+    });
+    $('#button-confirm').on('click', function() {
+        $('.alert-warning').remove();
+        $('#button-confirm').attr('disabled', 'disabled');
+        confirm();
+    });
+
+    function confirm()
+    {
+        if($('#enable-fraud-module').val() != 'none'){
+            if($('#input-new-pin').is(':checked')){
+                $('#input-new-pin').val(1);
+            } else {
+                $('#input-new-pin').val(0);
+            }
+        }
+        var form_data = $('#input-payment-novalnet-invoice-pin-by-callback, #input-payment-novalnet-invoice-pin-by-sms, #input-pin-data, #input-new-pin, #novalnet-invoice-company-field');
+        if($('#input-payment-novalnet-invoice-dob').val() != undefined){
+            form_data = $.merge(form_data, $('#input-payment-novalnet-invoice-dob'));
+        }
+        $.ajax({
+            type: 'POST',
+            url: 'index.php?route=extension/payment/novalnet_invoice/confirm',
+            data: form_data,
+            dataType: 'json',
+            beforeSend: function() {
+                $('#button-confirm').button('loading');
+            },
+            complete: function() {
+               $('#button-confirm').button('reset');
+            },
+            success: function(data){
+                $('.attention').remove();
+                $('#button-confirm').show();
+
+                if (data['success']) {
+                    location = data['success'];
+                }
+                if (data['error']) {
+                    $('.alert-warning').remove();
+                    $('#payment').before('<div class="alert alert-warning">'+data['error']+'</div>');
+                    $('#payment').show();
+                    $('#button-confirm').removeAttr('disabled');
+                    if($('#input-new-pin').length){
+                        $('#input-new-pin').prop('checked', false);
+                    }
+                    if($('#input-pin-data').length){
+                        $('#input-pin-data').val('');
+                    }
+                }
+                if (data['display_callback_info']) {
+                    $('.alert-warning').remove();
+                    $('#payment').before('<div class="alert alert-warning">'+data['display_callback_info']+'</div>');
+                    $('#payment').show();
+                    $('#invoice-form').hide();
+                    $('#display-transaction-pin').show();
+                    $('#button-confirm').attr('disabled', false);
+                }
+                if (data['pin_response']) {
+                    $('.alert-warning').remove();
+                    $('#payment').before('<div class="alert alert-warning">'+data['pin_response']+'</div>');
+                    $('#payment').show();
+                    if($('#tel_pin_no')){
+                        $('#tel_pin_no').val('');
+                    }
+                    $('#button-confirm').removeAttr('disabled');
+                    $("#new_pin").attr("checked",false);
+                }
+                if( data['pin_empty']) {
+                    $('#error-msg').html(data['pin_empty']);
+                    $('#error-msg').show();
+                    if (data['amount_change_checkout_url'])
+                    {
+                        location = data['amount_change_checkout_url'];
+                    }
+                }
+                if (data['checkout_url'])
+                {
+                    alert(data['max_level_message']);
+                    location = data['checkout_url'];
+                }
+            }
+        });
+    }
+</script>

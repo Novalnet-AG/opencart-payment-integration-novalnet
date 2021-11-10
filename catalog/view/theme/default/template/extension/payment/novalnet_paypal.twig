@@ -1,0 +1,137 @@
+<form class="form-horizontal">
+    <fieldset id="payment">
+        <h3>{{ text_title }} {{ payment_logo }}</h3>      
+        
+        {% if one_click_process_enabled is not empty %}
+            {% set display_style = 'display:block;' %}
+        {% else %}
+            {% set display_style = 'display:none;' %}
+        {% endif %}
+        <div id="paypal-oneclick-desc" style="{{ display_style }}">
+            <p>{{ text_guarantee_payment_reference_transaction }}</p>
+        </div>
+        {% if one_click_process_enabled is not empty %}
+            {% set one_click = 'display:none;' %}
+        {% else %}
+            {% set one_click = 'display:block;' %}
+        {% endif %}
+        <div id="paypal-redirect-desc" style="{{ one_click }}">
+            <p>{{ text_payment_description }}</p>
+            <p>{{ text_browser_description }}</p>
+        </div>
+        
+        {% if test_mode != "0" %}
+            <p>{{ text_test_mode_description }}</p>
+        {% endif %}
+
+        {% if oneclick =='ZERO_AMOUNT' %}
+         <p>{{ zero_amount_desc }}<p>
+        {% endif %}
+
+        {% if buyer_notification is not empty %}        
+            <p> {{ buyer_notification }}</p>
+        {% endif %}
+        
+        <div id="notification">
+            <div class="warning" id="error-msg" style="display:none;width:auto;"></div>
+        </div>
+        
+        {% set one_click = 0 %}
+        
+        {% if one_click_process_enabled is not empty %}
+        
+        {% set one_click = 1 %} 
+        
+        
+        <div id="nn-new-payment-details" style="{{ new_details_style }}; color:#66ABFF; cursor: pointer;">
+            {{ novalnet_paypal_new_payment_details }}
+        </div>
+        
+        <div id="placed-payment-details" style="{{ given_details_style }}" class="form-group col-md-3 col-sm-10">
+            <div id="nn-placed-payment-details" style="color:#66ABFF; cursor: pointer;">
+                {{ novalnet_paypal_placed_payment_details }}
+            </div>
+            
+            {% if user_masked_data.paypal_transaction_id is not empty %}        
+            <div class="form-group" style="padding:1px 15px;">
+              <label class="control-label" for="input-novalnet-paypal-transaction-id" style="text-transform: uppercase; font-size: 12; font-family: sans-serif; color: #9a9a9a;">{{ novalnet_paypal_transaction_id }}</label>
+                <input type="text" id="input-novalnet-paypal-transaction-id" value="{{ user_masked_data.paypal_transaction_id }}" readonly="readonly" class="form-control">
+            </div>
+            {% endif %}
+            <div class="form-group" style="padding:1px 15px;">
+              <label class="control-label" for="input-novalnet-paypal-transaction-id" style="text-transform: uppercase; font-size: 12; font-family: sans-serif; color: #9a9a9a;">{{ novalnet_paypal_novalnet_tid }}</label>
+                <input type="text" id="input-novalnet-paypal-transaction-id" value="{{ user_masked_data.tid }}" readonly="readonly" class="form-control">
+            </div>
+        </div>
+        <input type="hidden" id="new-or-placed-payment-details" name="new-or-placed-payment-details" value="placed_payment_details">
+        {% endif %}
+        <div  id="customer-oneclick" style="{{ customer_oneclick_style }};">
+            {% if oneclick =='ONE_CLICK' and one_click_desc == 1 %}
+                <input type="checkbox" name="customer_oneclick" id="customer-check">&nbsp  &nbsp<label>{{ save_card_details }}</label>
+            {% endif %}
+        </div>
+        <input type="hidden" id="novalnet-paypal-one-click-shopping" name="novalnet_paypal_one_click_shopping" value="{{ one_click }}"/>
+    </fieldset>
+</form>
+<div class="buttons">
+    <div class="pull-right">
+        <input type="button" value="{{ button_confirm }}" id="button-confirm" class="btn btn-primary" data-loading-text="{{ text_loading }}" />
+        <div class="result" id="result"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('#nn-new-payment-details').on('click', function(){
+        $('#nn-new-payment-details, #paypal-redirect-desc, #customer-check').hide();
+        $('#paypal-oneclick-desc, #placed-payment-details').show();
+        $('#new-or-placed-payment-details').val('new_payment_details');
+        $('#customer-oneclick').hide();
+        $('#novalnet-paypal-one-click-shopping').val('1');
+        
+    });
+
+    $('#nn-placed-payment-details').on('click',function(){
+        $('#nn-new-payment-details, #paypal-redirect-desc, #button-confirm, #customer-check').show();
+        $('#new-or-placed-payment-details').val('placed_payment_details');
+        $('#placed-payment-details, #paypal-oneclick-desc').hide();
+        $('#customer-oneclick').show();
+        $('#novalnet-paypal-one-click-shopping').val('0');
+    });
+    
+
+    $('#button-confirm').on('click', function() {
+        $('.alert-warning').remove();
+        $('#button-confirm').attr("disabled", true);
+        var data = $('#new-or-placed-payment-details, #novalnet-paypal-one-click-shopping,#customer-check');
+        if($('#customer-check').is(':checked')){
+            $('#customer-check').val('True');
+        } else {
+            $('#customer-check').val('False');
+        }
+        $.ajax({
+            type: 'POST',
+            url: 'index.php?route=extension/payment/novalnet_paypal/confirm',
+            data: data,
+            dataType: 'json',
+            beforeSend: function() {
+               $('#button-confirm').button('loading');
+            },
+            complete: function() {
+               $('#button-confirm').button('reset');
+            },
+            success: function (json)
+            {
+                if (json['error']) {
+                    $('#payment').before('<div class="alert alert-warning">'+json['error']+'</div>');
+                    $('#payment').show();
+                }
+                if (json['data_redirect']) {
+                    $('.result').html(json['data_redirect']);
+                    $('#button-confirm').hide();
+                }
+                if (json == null || json['success']) {
+                    location = json['success'];
+                }
+            }
+        });
+    });
+</script>

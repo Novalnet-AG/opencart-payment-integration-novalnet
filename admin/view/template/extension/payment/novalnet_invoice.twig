@@ -1,0 +1,280 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" id="form-novalnet-invoice" form="form-novalnet-invoice" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+            </div>
+            <h1>{{ novalnet_heading_title }} {{logo_novalnet_invoice}}</h1>
+            <ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}                
+                <li><a href="{{ breadcrumb.href }} ">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+		{% if error_warning %}        
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-novalnet-invoice" class="form-horizontal">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#tab-configuration" data-toggle="tab">{{ novalnet_heading_title }}</a></li>
+                        <li><a href="#tab-guarantee-configuration" data-toggle="tab">{{ text_guarantee_payment_configuration }}</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab-configuration">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-status">{{ entry_enable_payment }}</label>
+                                <div class="col-sm-10">
+                                    <select name="payment_novalnet_invoice_status" id="input-payment-novalnet-invoice-status" class="form-control">
+                                        <option value="1" {% if payment_novalnet_invoice_status == 1 %}  selected="selected" {% endif %} > {{ text_enabled }}</option>
+                                        <option value="0" {% if payment_novalnet_invoice_status == 0 %}  selected="selected" {% endif %} >{{ text_disabled }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-test-mode"><span data-toggle="tooltip" title="{{ test_mode_desc }}">{{ enable_test_mode }}</span></label>
+                                <div class="col-sm-10">
+                                    <select name="payment_novalnet_invoice_testmode" id="input-payment-novalnet-invoice-test-mode" class="form-control">
+                                        <option value="1"  {% if payment_novalnet_invoice_testmode == 1 %} selected="selected" {% endif %} >{{ text_true }} </option>
+                                        <option value="0" {% if payment_novalnet_invoice_testmode == 0 %}  selected="selected" {% endif %} >{{ text_false }} </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-fraud-enable"><span data-toggle="tooltip" title="{{ enable_fraud_module_desc }}">{{ enable_fraud_module }}</span></label>
+                                <div class="col-sm-10">
+                                    <select name="payment_novalnet_invoice_fraud_enable" id="input-payment-novalnet-invoice-fraud-enable" class="form-control">
+                                        <option value="none" {% if payment_novalnet_invoice_fraud_enable == 'none' %} selected="selected" {% endif %} >{{ fraud_module_none }} </option>
+                                        <option value="callback" {% if payment_novalnet_invoice_fraud_enable == 'callback' %} selected="callback" {% endif %} >{{ fraud_module_callback }} </option>
+                                        <option value="sms" {% if payment_novalnet_invoice_fraud_enable == 'sms' %} selected="selected" {% endif %} >{{ fraud_module_sms }} </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-fraud-minimum-value"><span data-toggle="tooltip" title="{{ minimum_val_fraud_module_desc }}">{{ minimum_val_fraud_module }}</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="payment_novalnet_invoice_fraud_min_val" id="input-payment-novalnet-invoice-fraud-minimum-value" value="{{ payment_novalnet_invoice_fraud_min_val }}" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-due-date"><span data-toggle="tooltip" title="{{ text_invoice_duedate_desc }}">{{ text_invoice_duedate }}</span></label>
+                                <div class="col-sm-10">
+									{% if payment_novalnet_invoice_due_date is not empty %}
+                                    <input type="number" name="payment_novalnet_invoice_due_date" id="input-payment-novalnet-invoice-due-date" value="{{ payment_novalnet_invoice_due_date }}" class="form-control"/>
+                                    {% else %}
+                                    <input type="text" name="payment_novalnet_invoice_due_date" id="input-payment-novalnet-invoice-due-date" value="" class="form-control"/>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-authenticate">{{ onhold_payment_action }}</label>
+                                <div class="col-sm-10">
+                                    
+                                    <select name="payment_novalnet_invoice_authenticate" id="input-payment-novalnet-authenticate" class="form-control">
+										{% if payment_novalnet_invoice_authenticate == "1" %}	
+											<option value="1" selected="selected">{{ authorize }}</option>
+											<option value="0">{{ capture }}</option>
+										{% else %}
+											<option value="1">{{ authorize }}</option>
+											<option value="0" selected="selected">{{ capture }}</option>
+										{% endif %}                                        
+                                    </select>
+                                </div>
+                            </div>
+							<div class="form-group nn_payment_onhold">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-manual-limit"><span data-toggle="tooltip" title="{{ entry_onhold_limit_desc }}">{{ entry_onhold_limit }}</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="input-payment-novalnet-invoice-manual-limit" name="payment_novalnet_invoice_manual_limit" value="{{ payment_novalnet_invoice_manual_limit }}" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-buyer-notification"><span data-toggle="tooltip" title="{{ notification_buyer_desc }}">{{ notification_buyer }}</span></label>
+                                <div class="col-sm-10">
+                                    <textarea name="payment_novalnet_invoice_buyer_notification" id="input-payment-novalnet-invoice-buyer-notification" cols="50" rows="2" class="form-control">{{ payment_novalnet_invoice_buyer_notification }}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-order-completion-status">{{ order_completion_status }}</label>
+                                <div class="col-sm-10">
+                                {% if payment_novalnet_invoice_order_completion_status is empty %}
+                                {% set payment_novalnet_invoice_order_completion_status = 15 %}
+                                {% endif %}
+                                    <select name="payment_novalnet_invoice_order_completion_status" id="input-payment-novalnet-invoice-order-completion-status" class="form-control">
+                                        {% for order_status in order_statuses %}   
+                                        <option value="{{ order_status.order_status_id }}" {% if order_status.order_status_id == payment_novalnet_invoice_order_completion_status %}  selected="selected" {% endif %}>{{ order_status.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-callback-order-status">{{ callback_order_status }} </label>
+                                <div class="col-sm-10">
+                                {% if payment_novalnet_invoice_callback_order_status is empty %}
+                                {% set payment_novalnet_invoice_callback_order_status = 5 %}
+                                {% endif %}
+                                    <select name="payment_novalnet_invoice_callback_order_status" id="input-payment-novalnet-invoice-callback-order-status" class="form-control">
+										{% for  order_status in order_statuses %}
+										<option value="{{ order_status.order_status_id }}" {% if order_status.order_status_id ==  payment_novalnet_invoice_callback_order_status %} selected="selected" {% endif %}>{{ order_status.name }}</option>
+										{% endfor %}                                       
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-total"><span data-toggle="tooltip" title="{{ entry_minimum_goods_desc }}">{{ entry_minimum_goods }}</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="payment_novalnet_invoice_total" id="input-payment-novalnet-invoice-total" value="{{ payment_novalnet_invoice_total }}" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-geo-zone-id"><span data-toggle="tooltip" title="{{ entry_geo_zone_desc }}">{{ entry_geo_zone }}</span></label>
+                                <div class="col-sm-10">
+                                    <select name="payment_novalnet_invoice_geo_zone_id" id="input-payment-novalnet-invoice-geo-zone-id" class="form-control">
+                                        <option value="0">{{ text_all_zones }}</option>
+                                        {% for geo_zone in  geo_zones%}
+                                        <option value="{{ geo_zone.geo_zone_id }}" {% if geo_zone.geo_zone_id == payment_novalnet_invoice_geo_zone_id %} selected="selected" {% endif %} >{{ geo_zone.name }} </option>
+                                        {% endfor %}                                        
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-sort-order"><span data-toggle="tooltip" title="{{ entry_sort_order_desc }}">{{ entry_sort_order }}</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="payment_novalnet_invoice_sort_order" id="input-payment-novalnet-invoice-sort-order" value="{{ payment_novalnet_invoice_sort_order }}" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tab-guarantee-configuration">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="text_guarantee_payment_requirements">{{ text_guarantee_payment_requirements }}</label><br/><br/>
+                                <div class="col-sm-10">
+                                    <ul>
+                                        <li>
+                                            {{ text_guarantee_payment_requirements_1 }}
+                                        </li>
+                                        <li>
+                                            {{ text_guarantee_payment_requirements_2 }}
+                                        </li>
+                                        <li>
+                                            {{ text_guarantee_payment_requirements_3 }}
+                                        </li>
+                                        <li>
+                                            {{ text_guarantee_payment_requirements_4 }}
+                                        </li>
+                                        <li>
+                                            {{ text_guarantee_payment_requirements_5 }}
+                                        </li>
+                                        <li>
+                                            {{ text_guarantee_payment_requirements_6 }}
+                                        </li>                                        
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-guarantee-payment-enable">{{ text_guarantee_payment_enable }}</label>
+                                <div class="col-sm-10">
+                                    <select name="payment_novalnet_invoice_guarantee_payment_enable" id="input-payment-novalnet-invoice-guarantee-payment-enable" class="form-control">
+										{% if payment_novalnet_invoice_guarantee_payment_enable == "1" %}
+											<option value="1" selected="selected">{{ text_true }}</option>
+											<option value="0">{{ text_false }}</option>
+										{% else %}
+											<option value="1">{{ text_true }}</option>
+											<option value="0" selected="selected">{{ text_false }}</option>
+										{% endif %}                                        
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group nn_payment_guarantee">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-guarantee-minimum-order-amount"><span data-toggle="tooltip" title="{{ text_guarantee_payment_minimum_order_amount_desc }}">{{ text_guarantee_payment_minimum_order_amount }}</span></label>
+                                <div class="col-sm-10">
+									{% if payment_novalnet_invoice_guarantee_minimum_order_amount is not empty %}
+                                    <input type="text" name="payment_novalnet_invoice_guarantee_minimum_order_amount" id="input-payment-novalnet-invoice-guarantee-minimum-order-amount" value=" {{payment_novalnet_invoice_guarantee_minimum_order_amount}}" class="form-control"/>
+                                    {% else %}
+                                    <input type="text" name="payment_novalnet_invoice_guarantee_minimum_order_amount" id="input-payment-novalnet-invoice-guarantee-minimum-order-amount" value="" class="form-control"/>
+                                    {% endif %}
+                                    {% if error_warning and error_warning == 'novalnet_invoice_guarantee_minimum_order_amount' %}
+										<div class="text-danger">{{ error_warning }}</div>
+                                    {% endif %}                                  
+                                </div>
+                            </div>
+                            <div class="form-group nn_payment_guarantee">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-force-non-guarantee-payment"><span data-toggle="tooltip" title="{{ text_guarantee_payment_force_desc }}">{{ text_guarantee_payment_force }}</span></label>
+                                <div class="col-sm-10">
+                                    <select name="payment_novalnet_invoice_guarantee_payment_force" id="input-payment-novalnet-invoice-force-non-guarantee-payment" class="form-control">
+                                        <option value="0" {% if payment_novalnet_invoice_guarantee_payment_force == 0 %} selected="selected" {% endif %}>{{ text_false }}</option>
+                                        <option value="1"{% if (payment_novalnet_invoice_guarantee_payment_force == 1 or payment_novalnet_invoice_guarantee_payment_force is empty) %}  selected="selected" {% endif %} >{{ text_true }}</option>
+                                    </select>
+                                </div>
+                            </div>
+							<div class="form-group nn_payment_guarantee">
+								<label class="col-sm-2 control-label" for="input-payment-novalnet-invoice-guarantee-pending-order-status">{{ guarantee_payment_pending_status }}</label>
+								<div class="col-sm-10">
+								 {% if payment_novalnet_invoice_guarantee_pending_order_status is empty %}
+                                {% set payment_novalnet_invoice_guarantee_pending_order_status = 1 %}
+                                {% endif %}
+									<select name="payment_novalnet_invoice_guarantee_pending_order_status" id="input-payment-novalnet-invoice-guarantee-pending-order-status" class="form-control">
+										{% for order_status in order_statuses %}
+										<option value="{{ order_status.order_status_id }}" {% if order_status.order_status_id == payment_novalnet_invoice_guarantee_pending_order_status %} selected="selected" {% endif %} >{{ order_status.name }}</option>
+										{% endfor %}                                     
+									</select>
+								</div>
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+{{ footer }}
+<script>
+
+    $(document).ready(function() {		
+        payment_guarantee();
+        $('select[name="payment_novalnet_invoice_guarantee_payment_enable"]').change(function(){
+            payment_guarantee();
+        });
+    });
+    function payment_guarantee() {
+        if($('select[name="payment_novalnet_invoice_guarantee_payment_enable"] option:selected').val() == 1){
+            $('.nn_payment_guarantee').show();
+        } else {
+            $('.nn_payment_guarantee').hide();
+        }
+    }
+    $(document).ready(function(){    
+    
+       nn_payment_onhold();
+        
+        $('select[name="payment_novalnet_invoice_authenticate"]').change(function(){
+            nn_payment_onhold();
+        });
+
+
+    });
+
+
+    function nn_payment_onhold(){
+    if($('select[name="payment_novalnet_invoice_authenticate"] option:selected').val() == 1){
+            $('.nn_payment_onhold').show();
+        } else {
+            $('.nn_payment_onhold').hide();
+        }
+    }
+
+    $('#form-novalnet-invoice').on('click', function() {
+         if ($('input[name="payment_novalnet_invoice_due_date"]').val() != '' && $('input[name="payment_novalnet_invoice_due_date"]').val() < 7) {
+            alert("Payment due date must be greater than 7 days");
+            $("#form-novalnet-invoice").valid();
+        }
+    });
+
+    
+</script>

@@ -1,0 +1,157 @@
+<link rel='stylesheet' type='text/css' href='../catalog/view/theme/default/stylesheet/novalnet.css' />
+<script src="view/javascript/novalnet/novalnet_extension.js" type="text/javascript"></script>
+{% if show_manage_transaction is not empty %}
+    <fieldset id="manage-transaction-form">
+        <legend>{{ text_manage_transaction_process }}</legend>
+        <form method="post" id="novalnet-manage-transaction" class="form-horizontal">
+            <input type="hidden" id="order_no" name="order_no" value="{{ order_id }}">
+            <input type="hidden" id="novalnet_action" name="novalnet_action" value="capture_void_process">
+            <input type="hidden" id="novalnet-error-text-status" value="{{ text_status_select }}">
+            <input type="hidden" id="warning-cancel" value="{{ text_cancel_message }}">
+            <input type="hidden" id="warning-capture" value="{{ text_capture_message }}">
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="select-transaction-status">{{ text_status_select }}</label>
+                <div class="col-sm-10">
+                    <select name="transaction_status" id="select-transaction-status" class="form-control">
+                        <option value="">{{ text_select }}</option>
+                        <option value="100">{{ text_confirm }}</option>
+                        <option value="103">{{ text_cancel }}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="pull-right">
+                <button type="button" id="button-novalnet-manage-transaction" data-loading="{{ text_loading }}" class="btn btn-primary novalnet-button">{{ text_update }}</button>
+            </div>
+        </form>
+    </fieldset>
+{% endif %}
+{% if show_amount_book is not empty %}
+    <fieldset id="amount-book-form">
+        <legend>{{ text_booking_transaction }}</legend>
+        <form method="post" id="novalnet-amount-book" class="form-horizontal">
+            <input type="hidden" id="order_no" name="order_no" value="{{ order_id }}">
+            <input type="hidden" id="novalnet_action" name="novalnet_action" value="amount_booking_process">
+            <input type="hidden" id="novalnet-error-amount-invalid" value="{{ error_amount_invalid }}">
+            <input type="hidden" id="warning-amount-book" value="{{ text_book_message }}">
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-book-amount">{{ text_booking_transaction_amount }}</label>
+                <div class="col-sm-10">
+                    <input type="text" name="booking_amount" id="input-book-amount" value="{{ order_details.transaction_details.total_amount }}" onkeypress='return isNumberKey(event)'; class="form-control"/>
+                    <span> {{ text_cents }} </span>
+
+                </div>
+            </div>
+            <div class="pull-right">
+                <button type="button" id="button-novalnet-amount-book" data-loading="{{ text_loading }}" class="btn btn-primary novalnet-button">{{ text_book }}</button>
+            </div>
+        </form>
+    </fieldset>
+{% endif %}
+
+{% if show_refund is not empty %}
+    <fieldset id="refund-form">
+        <legend>{{ text_refund_process }}</legend>
+        <form id="novalnet-amount-refund" method="post" class="form-horizontal">
+            <input type="hidden" id="order_no" name="order_no" value="{{ order_id }}">
+            <input type="hidden" id="novalnet_action" name="novalnet_action" value="refund_process">
+            <input type="hidden" id="novalnet-error-amount-invalid" value="{{ error_amount_invalid }}">
+            <input type="hidden" id="warning-refund" value="{{ text_refund_message }}">            
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-refund-amount">{{ text_refund_amount }}</label>
+                <div class="col-sm-10">
+                    <input type="text" name="transaction_refund_amount" id="input-refund-amount" value="{{ transaction_details.amount }}" onkeypress='return isNumberKey(event)'; class="form-control"/>
+                    <span> {{ text_cents }}</span>
+
+                </div>
+            </div>
+            {% if show_refund_reference is not empty %}
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="input-refund-ref">{{ text_refund_reference }}</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="refund_ref" id="input-refund-ref" class="form-control"/>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="pull-right">
+                <button type="button" id="button-novalnet-amount-refund" data-loading="{{ text_loading }}" class="btn btn-primary">{{ text_update }}</button>
+            </div>
+        </form>
+    </fieldset>
+{% endif %}
+
+{% if show_amount_update is not empty %}
+    <fieldset id="amount-update-form">
+        {% if order_details.payment_id == 59 %}
+			<legend>{{ text_amount_expiry_date_update }}</legend>
+		{% elseif order_details.payment_id == 27 %}
+			<legend>{{ text_refund_amount_duedate_change }}</legend>
+		{% else %}
+			<legend>{{ text_amount_update }}</legend>
+        {% endif %}
+        
+        <form id="novalnet-amount-update" method="post" class="form-horizontal">
+            <input type="hidden" id="order_no" name="order_no" value="{{ order_id }}">
+            <input type="hidden" id="novalnet_action" name="novalnet_action" value="amount_update_process">
+            <input type="hidden" id="novalnet-error-amount-invalid" value="{{ error_amount_invalid }}">
+            <input type="hidden" id="novalnet-error-due-date" value="{{ error_amount_update_duedate_invalid }}">
+            <input type="hidden" id="novalnet-error-due-date-future" value="{{ error_amount_update_duedate_future }}">
+            {% if order_details.payment_id == 27 %}
+            <input type="hidden" id="warning-amount-update" value="{{ text_amount_update_with_duedate_message }}">
+	    {% elseif order_details.payment_id == 59 %}
+            <input type="hidden" id="warning-amount-update" value="{{ text_amount_update_with_exipry_message }}">
+            {% else %}
+            <input type="hidden" id="warning-amount-update" value="{{ text_amount_update_message }}">
+            {% endif %}            
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-update-amount">{{ text_transaction_amount }}</label>
+                <div class="col-sm-10">
+                    <input type="text" name="novalnetAmountUpdate" id="input-update-amount" value="{{ transaction_details.amount }}" onkeypress='return isNumberKey(event)'; class="form-control"/>
+                    <span> {{ text_cents }} </span>
+                </div>
+            </div>
+            {% if show_due_date_update is not empty %}            
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="input-due-date">{{ text_amount_update_transaction_duedate }}</label>
+                    <div class="input-group date" style=" margin-left: 18%; width: 80.5%;">
+                        <input type="date-picker" class="form-control" id="input-due-date" data-date-format="YYYY-MM-DD" value="{{ order_details.additional_details.due_date }}" name="dueDateUpdate" >
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                    </div>
+                </div>
+            {% endif %}
+            {% if show_amount_expiry_date_update is not empty %}
+				<div class="form-group">
+                    <label class="col-sm-2 control-label" for="input-due-date">{{ text_slip_expiry_date }}</label>
+                    <div class="input-group date" style=" margin-left: 18%; width: 80.5%;">
+                        <input type="date-picker" class="form-control" id="input-expiry-date" data-date-format="YYYY-MM-DD" value="{{ order_details.additional_details.cp_due_date }}" name="expiryDateUpdate" >
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="pull-right">
+                <button type="button" id="button-novalnet-amount-update" data-loading="{{ text_loading }}" class="btn btn-primary">{{ text_update }}</button>
+            </div>
+        </form>
+    </fieldset>
+{% endif %}
+<script>	
+    function sendRequest(order, form) {		
+        var url_path = 'index.php?route=extension/payment/novalnet/'+order+'&user_token={{ user_token }}&order_id={{ order_id }}';        
+        $.ajax({
+            type: 'POST',
+            url: url_path,
+            data: $('#'+form+' :input'),
+            dataType: 'json',
+            beforeSend: function() {
+                $('#button-'+form).button('loading');
+            },
+            complete: function() {
+                $('#button-'+form).button('reset');
+            },
+            success: function( response ) {
+                api_response( response, form );
+            }
+        });
+    }
+</script>
