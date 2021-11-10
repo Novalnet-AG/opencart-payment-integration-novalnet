@@ -1,0 +1,282 @@
+<form class="form-horizontal" autocomplete="off">
+    <fieldset id="payment">
+    {% if guarantee_payment_force == false  %}
+    {{error_msg}}
+    {% endif %} 
+        <h3>{{ text_title }} {{ payment_logo }}</h3>
+        <p>{{ text_payment_description }}</p>
+        {% if test_mode != "0" %}
+        <p>{{ text_test_mode_description }}</p>
+        {% endif %}
+        
+        {% if one_click =='ZERO_AMOUNT' and enable_guarantee_payment is empty %}
+        
+         <p>{{ zero_amount_desc }}<p>
+        {% endif %}
+        
+        {% if buyer_notification is not empty %}    
+        <p>{{ buyer_notification }}</p>
+        {% endif %}     
+        
+        <link rel="stylesheet" type="text/css" href="catalog/view/theme/default/stylesheet/novalnet.css" />
+        <script src="catalog/view/javascript/novalnet/novalnet_sepa.js"></script>
+
+        <div id="notification">
+            <div class="warning" id="error-msg" style="display:none;width:auto;color:red;"></div>
+        </div>
+        
+        {% if one_click_process_enabled is not empty %}
+        <div id="sepa-masking-form" style="{{ given_details_style }}"; color:blue; cursor: pointer;">
+            <a class ="button" id="nn-new-account-link" style="cursor: pointer;">
+                {{ novalnet_sepa_new_account_details }}
+            </a>
+            <input type="hidden" id="novalnet-sepa-one-click-shopping" name="novalnet_sepa_one_click_shopping" value="1"/>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-novalnet-sepa-account-no">{{ text_sepa_account_holder }}</label>
+                <div class="col-sm-10">
+                    <input type="text" value="{{ user_masked_data.account_holder }}" class="form-control" readonly="readonly">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-novalnet-sepa-account-no">{{ text_sepa_account_no }}</label>
+                <div class="col-sm-10">
+                    <input type="text" value="{{ user_masked_data.iban }}" class="form-control" readonly="readonly">
+                </div>
+            </div>
+            {% if enable_guarantee_payment and guarantee_payment_error == false and company is empty and error_msg is empty %}   
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-novalnet-sepa-one-click-dob">{{ dob_label }}</label>
+                <div class="col-sm-10">
+                <input type="text" name="payment_novalnet_sepa_dob" value="" placeholder="YYYY-MM-DD" id="input-payment-novalnet-sepa-dob" class="form-control">
+                </div>
+            </div>
+            {% elseif guarantee_payment_error %}        
+            <label class="control-label" for="input-novalnet-sepa-guarantee-error" ><span color="red">{{ guarantee_payment_error_text }}</span></label>
+            {% endif %}
+        </div>
+        {% else %}   
+        <input type="hidden" id="novalnet-sepa-one-click-shopping" name="novalnet_sepa_one_click_shopping" value="0"/>
+        {% endif %}
+
+        <input type="hidden" id="process-pin-call" value="{{ process_pin_call }}"/>
+        <div class="loader" id="sepa-loader-icon" style="display:none"></div>
+
+        <div class="content" id="sepa-form" style="{{ new_details_style }}">
+            {% if one_click_process_enabled is not empty %}
+                <a class ="button" id="nn-given-account-link" style="cursor: pointer;">
+                    {{ novalnet_sepa_given_account_details }}
+                </a>
+            {% endif %}
+            <div class="form-group required">
+              <label class="col-sm-2 control-label" for="input-novalnet-sepa-holder">{{ text_sepa_account_holder }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="novalnet_sepa_holder" value="{{ account_holder }}" placeholder="{{ text_sepa_account_holder }}" id="input-novalnet-sepa-holder" onkeypress='return sepa_validation(event)'; class="form-control">
+              </div>
+            </div>
+            <div class="form-group required">
+     <label class="col-sm-2 control-label" for="input-novalnet-sepa-account-no">{{ text_sepa_account_no }}</label>
+                <div class="col-sm-10">
+                    <input type="text" name="novalnet_sepa_account_no" value="" placeholder="{{ text_sepa_account_no }}" id="input-novalnet-sepa-account-no" style="text-transform: uppercase"class="form-control" onkeypress='return sepa_validation(event)';>
+                    <span id="novalnet_sepa_iban_span"></span>
+                </div>
+            </div>
+            
+            {% if enable_guarantee_payment and guarantee_payment_error == false and company is empty and error_msg is empty %}        
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-dob">{{ dob_label }}</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="payment_novalnet_sepa_dob" value="" placeholder="YYYY-MM-DD" id="input-payment-novalnet-sepa-dob" class="form-control">
+                    </div>
+                </div>
+            {% elseif guarantee_payment_error %}       
+                <label class="control-label" for="input-novalnet-sepa-guarantee-error" ><span color="red">{{ guarantee_payment_error_text }}</span></label>
+            {% endif %}
+                
+            {% if show_fraud_module and enable_guarantee_payment == false %}        
+            <div class="form-group required">
+                <label class="col-sm-2 control-label" for="{{'input-payment-novalnet-sepa-pin-by-' ~ enabled_fraud_module}}"> {{ fraud_check_label }}</label>
+                <div class="col-sm-10">
+                    <input type="text" name="{{'payment_novalnet_sepa_pinby_' ~ enabled_fraud_module}}" value="{{ fraud_check_value }}" placeholder="{{ fraud_check_label }}" id="{{'input-payment-novalnet-sepa-pin-by-' ~ enabled_fraud_module}}" class="form-control" >
+                </div>
+            </div>
+            {% endif %}
+            {% if one_click =='ONE_CLICK' and one_click_desc == 1 %}
+                <div class="form-group" style="padding:1px 15px;">
+                    <input type="checkbox" name="customer_oneclick" id="customer-check">&nbsp  &nbsp<label for="customer-check">{{ save_card_details }}</label>
+                </div>
+            {% endif %}
+            <div class="form-group" style="padding:1px 15px;">
+              <a data-toggle="collapse" data-target="#sepa_mandate_information" class="collapsed" aria-expanded="false">{{ text_sepa_mandate_confirmation }}</a>
+                <div class="panel panel-default collapse" id="sepa_mandate_information" style="padding: 5px; height: 12px;" aria-expanded="false">
+                    {{ text_sepa_mandate_confirmation_desc }}
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="novalnet-sepa-account-error" value="{{ novalnet_sepa_payment_details_error }}" />
+        <div id="display-transaction-pin" style="display: none;">
+            <div class="form-group required">
+                <label class="col-sm-2 control-label" for="input-pin-data">{{ text_fraud_transaction_pin }}</label>
+                <div class="col-sm-10">
+                    <input type="text" name="pin_data" placeholder="{{ text_fraud_transaction_pin }}" id="input-pin-data" class="form-control" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-new-pin">{{ text_fraud_forgot_pin }}</label>
+                <div class="col-sm-10">
+                    <input type="checkbox" name="new_pin" id="input-new-pin"/>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="novalnet-sepa-company-field" name="payment_novalnet_sepa_company" value="{{ company }}"/>
+    </fieldset>
+</form>
+<div class="buttons">
+    <div class="pull-right">
+        <input type="button" value="{{ button_confirm }}" id="button-confirm" class="btn btn-primary" data-loading-text="{{ text_loading }}" />
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+        if ($('#input-payment-novalnet-sepa-dob, #input-novalnet-sepa-one-click-dob').length) {
+            $('#input-payment-novalnet-sepa-dob, #input-novalnet-sepa-one-click-dob').datetimepicker({
+                pickDate: true,
+                pickTime: false,
+                format: 'YYYY-MM-DD'
+            });
+            $('.date').datetimepicker({
+                pickTime: false
+            });
+        }
+
+        $('#input-payment-novalnet-sepa-pin-by-callback, #input-payment-novalnet-sepa-pin-by-sms').keypress(function(event){
+            var keycode = ('which' in event) ? event.which : event.keyCode;
+            reg = /^(?:[0-9\s]+$)/;
+            return ( reg.test(String.fromCharCode(keycode)) || keycode === 0 || keycode === 8 ) ? true : false;
+        });
+        if($('#process-pin-call').val() != ''){
+            $('#sepa-form').hide();
+            $('#display-transaction-pin').show();
+        } else {
+            if(!$('#novalnet-sepa-one-click-shopping').val())
+                $('#sepa-form').show();
+            $('#display-transaction-pin').hide();
+        }
+
+    });
+    $('#nn-new-account-link').bind('click', function(){
+
+        $('#sepa-masking-form').hide();
+        $('#sepa-form').show();
+        $('#novalnet-sepa-one-click-shopping').val('0');
+    });
+
+    $('#nn-given-account-link').bind('click',function(){
+        $('#sepa-masking-form').show();
+        $('#sepa-form').hide();
+        $('#novalnet-sepa-one-click-shopping').val(1);
+        $('#given_card_details').hide();
+    });
+
+
+    $('#button-confirm').on('click', function() {
+        $('.alert-warning').remove();
+        $('#error-msg').hide();
+        if ( jQuery('#checkbox-novalnet-sepa-mandate-confirm').is(":checked") && jQuery('#novalnet-sepa-one-click-shopping').val() == 0 && jQuery('#process-pin-call').val() == '' ) {
+            $('#sepa-loader-icon').css('display','none');
+            alert(jQuery('#novalnet_sepa_mandate_error').val());
+            return false;
+        }
+        confirm();
+
+    });
+
+    function confirm()
+    {
+        var form_data = $('#input-novalnet-sepa-holder, #input-payment-novalnet-sepa-pin-by-callback, #input-payment-novalnet-sepa-pin-by-sms, #input-pin-data, #input-new-pin, #novalnet-sepa-one-click-shopping,#customer-check,#input-novalnet-sepa-account-no,#novalnet-sepa-company-field');
+        if($('#enable_fraud_module').val() != 'none'){
+            if($('#input-new-pin').is(':checked')){
+                $('#input-new-pin').val(1);
+            } else {
+                $('#input-new-pin').val(0);
+            }
+        }
+        if($('#customer-check').is(':checked')){
+            $('#customer-check').val('True');
+        } else {
+            $('#customer-check').val('False');
+        }
+        if($('#input-payment-novalnet-sepa-dob').val() != undefined){
+            form_data = $.merge(form_data, $('#input-payment-novalnet-sepa-dob'));
+        }
+        if($('#input-novalnet-sepa-one-click-dob').val() != undefined){
+            form_data = $.merge(form_data, $('#input-novalnet-sepa-one-click-dob'));
+        }
+        $.ajax({
+            type: 'POST',
+            url: 'index.php?route=extension/payment/novalnet_sepa/confirm',
+            data: form_data,
+            dataType: 'json',
+            beforeSend: function() {
+               $('#button-confirm').button('loading');
+            },
+            complete: function() {
+               $('#button-confirm').button('reset');
+            },
+            success: function(data){
+                $('.attention').remove();
+                $('#button-confirm').show();
+
+                if (data['success']) {
+                    $('#sepa-loader-icon').css('display','none');
+                    location = data['success'];
+                }
+                if (data['error']) {
+                    $('.alert-warning').remove();
+                    $('#payment').before('<div class="alert alert-warning">'+data['error']+'</div>');
+                    $('#payment').show();
+                    $('#button-confirm').removeAttr('disabled');
+                    $('#sepa-loader-icon').css('display','none');
+                }
+                if (data['display_callback_info']) {
+                    $('.alert-warning').remove();
+                    $('#payment').before('<div class="alert alert-warning">'+data['display_callback_info']+'</div>');
+                    $('#payment').show();
+                    $('#sepa-loader-icon').hide();
+                    $('#sepa-form').hide();
+                    $('#given_card_details').hide();
+                    $('#display-transaction-pin').show();
+                    $('#button-confirm').attr('disabled', false);
+                }
+                if (data['pin_response']) {
+
+                    $('.alert-warning').remove();
+                    $('#payment').before('<div class="alert alert-warning">'+data['pin_response']+'</div>');
+                    $('#payment').show();
+                    $('#sepa-loader-icon').hide();
+                    if($('#input-pin-data')){
+                        $('#input-pin-data').val('');
+                    }
+                    $('#button-confirm').removeAttr('disabled');
+                    $("#input-new-pin").attr("checked",false);
+                }
+                if( data['pin_empty']) {
+                    $('.alert-warning').remove();
+                    $('#sepa-loader-icon').css('display','none');
+                    $('#payment').before('<div class="alert alert-warning">'+data['pin_empty']+'</div>');
+                    $('#payment').show();
+                    if (data['amount_change_checkout_url'])
+                    {
+                        location = data['amount_change_checkout_url'];
+                    }
+                }
+                if (data['max_level'])
+                {
+                    alert(data['max_level_alert']);
+                    location = data['max_level'];
+                }
+            }
+        });
+    }
+</script>

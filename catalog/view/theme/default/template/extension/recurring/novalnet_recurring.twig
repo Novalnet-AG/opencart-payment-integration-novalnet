@@ -1,0 +1,54 @@
+{% if next_subs_cycle != '0000-00-00' %}
+    <h3 id="novalnet-next-charging-date">{{ text_next_charging_date }} {{ next_subs_cycle }}</h3>
+    <div class="buttons clearfix">
+      <div class="pull-left">
+        <button type="button" id="button-cancel" data-loading-text="{{ text_loading }}" class="btn btn-danger">{{ button_subscription_cancel }}</button>
+      </div>
+    </div>
+{% endif %}
+
+<h3>{{ text_recurring_orders }}</h3>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <td>{{ text_novalnet_order_no }}</td>
+                <td>{{ text_novalnet_TID }}</td>
+                <td>{{ text_novalnet_amount }}</td>
+                <td>{{ text_payment_method }}</td>
+                <td>{{ text_transaction_details }}</td>
+            </tr>
+        </thead>
+        <tbody>
+			{% for  value in recurring_details %}             
+                <tr>
+					<td>{{ value.order_no }}</td>
+                    <td>{{ value.tid }}</td>
+                    <td>{{ value.amount }}</td>
+                    <td>{{ payment_method }}</td>
+                    <td>{{ value.transaction_details }}</td>
+                </tr>
+             {% endfor %}
+         
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+$(document).delegate('#button-cancel', 'click', function() {
+    $.ajax({
+        url: 'index.php?route=extension/recurring/novalnet_recurring/recurringCancel',
+        dataType: 'json',
+        data: {'order_recurring_id':'{{ order_recurring_id }}'},
+        beforeSend: function() {
+            $('#button-cancel').button('loading');
+        },
+        success: function(json) {
+            if (json['success']) {
+                $('#content').prepend('<div class="alert alert-danger">' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                $('#button-cancel, #novalnet-next-charging-date').hide();
+                $('html, body').animate({ scrollTop: 0 }, 'slow');
+            }
+        }
+    });
+});
+</script>
