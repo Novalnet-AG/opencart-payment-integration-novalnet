@@ -1,0 +1,100 @@
+<form class="form-horizontal">
+	<fieldset id="payment">
+
+	{% if guarantee_payment_force == false  %}
+	{{error_msg}}
+	{% endif %}	
+		<h3>{{ text_title }} {{ payment_logo }}</h3>
+		<p>{{ text_payment_description }}</p>
+		
+		{% if test_mode != "0" %}
+		<p>{{ text_test_mode_description }}</p>
+		{% endif %}		
+
+		{% if buyer_notification is not empty %}    
+		<p>{{ buyer_notification }}</p>
+		{% endif %}
+		
+		<div id="notification">
+			<div class="warning" id="error-msg" style="display:none;width:auto;color:red;"></div>
+		</div>
+		
+		<link rel="stylesheet" type="text/css" href="catalog/view/theme/default/stylesheet/novalnet.css" />
+
+		<div class="content" id="invoice-form">
+			{% if enable_guarantee_payment and guarantee_payment_error == false and company is empty and error_msg is empty  %}
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="input-novalnet-invoice-dob" style="text-align:left;">
+					{{ dob_label }}
+				</label>
+				<div class="col-sm-10">
+					<input type="text" value="" placeholder="YYYY-MM-DD" id="input-payment-novalnet-invoice-dob" name="payment_novalnet_invoice_dob" class="form-control">
+				</div>
+			</div>
+			{%  elseif guarantee_payment_error %}       
+			<label class="control-label" for="input-novalnet-sepa-guarantee-error" ><span color="red">{{ guarantee_payment_error_text }}</span></label>
+			{% endif %}	
+		</div>
+        <input type="hidden" id="novalnet-invoice-company-field" name="payment_novalnet_invoice_company" value="{{ company }}"/>
+	</fieldset>
+</form>
+<div class="buttons">
+    <div class="pull-right">
+        <input type="button" value="{{ button_confirm }}" id="button-confirm" class="btn btn-primary" data-loading-text="{{ text_loading }}" />
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        if ($('#input-payment-novalnet-invoice-dob').length) {
+            $('#input-payment-novalnet-invoice-dob').datetimepicker({
+                pickDate: true,
+                pickTime: false,               
+                format: 'YYYY-MM-DD',           
+            });           
+        }
+    });
+    $('#button-confirm').on('click', function() {
+        $('.alert-warning').remove();
+        $('#button-confirm').attr('disabled', 'disabled');
+        confirm();
+    });
+
+    function confirm()
+    {
+        var form_data = $('#novalnet-invoice-company-field');
+        if($('#input-payment-novalnet-invoice-dob').val() != undefined){
+            form_data = $.merge(form_data, $('#input-payment-novalnet-invoice-dob'));
+        }
+        $.ajax({
+            type: 'POST',
+            url: 'index.php?route=extension/payment/novalnet_invoice/confirm',
+            data: form_data,
+            dataType: 'json',
+            beforeSend: function() {
+                $('#button-confirm').button('loading');
+            },
+            complete: function() {
+               $('#button-confirm').button('reset');
+            },
+            success: function(data){
+                $('.attention').remove();
+                $('#button-confirm').show();
+
+                if (data['success']) {
+                    location = data['success'];
+                }
+                if (data['error']) {
+                    $('.alert-warning').remove();
+                    $('#payment').before('<div class="alert alert-warning">'+data['error']+'</div>');
+                    $('#payment').show();
+                    $('#button-confirm').removeAttr('disabled');
+                }
+                if (data['checkout_url'])
+                {
+                    alert(data['max_level_message']);
+                    location = data['checkout_url'];
+                }
+            }
+        });
+    }
+</script>

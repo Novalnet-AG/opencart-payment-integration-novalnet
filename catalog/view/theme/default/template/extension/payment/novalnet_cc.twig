@@ -1,0 +1,171 @@
+<!--<script src="https://cdn.novalnet.de/js/v2/NovalnetUtility.js"></script>-->
+<form class="form-horizontal">
+    <fieldset id="payment">
+        <h1>{{ text_title }} {{ payment_logo }} {{ amex_logo }} {{ maestro_logo }} </h1>
+        {% if nn_enforce_3d != "0" %}
+            <p>{{ text_payment_description }}</p>
+        {% else %}
+			<p>{{ text_direct_payment_description }}</p>
+        {% endif %}
+        
+        {% if test_mode != "0" %}
+            <p><span color="red">{{ text_test_mode_description }}</span></p>
+        {% endif %}
+        {% if oneclick =='ZERO_AMOUNT' %}
+         <p>{{ zero_amount_desc }}<p>
+        {% endif %}
+        {% if buyer_notification is not empty %}        
+            <p>{{ buyer_notification }}</p>
+        {% endif %}
+        <link rel="stylesheet" type="text/css" href="catalog/view/theme/default/stylesheet/novalnet.css" />
+
+        <div id="notification">
+            <div class="warning" id="error-msg" style="display:none;width:auto;color:red;"></div>
+        </div>
+        {% set one_click = 0 %}
+        
+        {% if one_click_process_enabled is not empty %}
+        {% set one_click = 1 %}
+        <div id="cc-masking-form" style="{{ given_details_style }}"; color:blue; cursor: pointer;" class="form-group col-md-4 col-sm-12">
+            <a class ="button" id="nn-new-card-link" style="cursor: pointer;">
+                {{ novalnet_cc_new_card_details }}
+            </a>
+            <div class="form-group" style="padding:1px 15px;">
+              <label class="control-label" for="input-novalnet-cc-card-type" style="text-transform: uppercase; font-size: 12; font-family: sans-serif; color: #9a9a9a;">{{ text_cc_type }}</label>
+              {% if user_masked_data.cc_card_type is not empty %}
+                <input type="text" id="input-novalnet-cc-card-type" value="{{ user_masked_data.cc_card_type }}" readonly="readonly" class="form-control">
+              {% else %}
+                <input type="text" value="" class="form-control" readonly="readonly">
+              {% endif %}
+            </div>
+            <div class="form-group" style="padding:1px 15px;">
+              <label class="control-label" for="input-novalnet-cc-card-holder" style="text-transform: uppercase; font-size: 12; font-family: sans-serif; color: #9a9a9a;">{{ text_cc_holder }}</label>
+              {% if user_masked_data.cc_holder is not empty %}
+              <input type="text" id="input-novalnet-cc-card-holder" value="{{ user_masked_data.cc_holder }}" readonly="readonly" class="form-control">
+              {% else %}
+                <input type="text" value="" class="form-control" readonly="readonly">
+              {% endif %}
+            </div>
+            <div class="form-group" style="padding:1px 15px;">
+              <label class="control-label" for="input-novalnet-cc-card-no" style="text-transform: uppercase; font-size: 12; font-family: sans-serif; color: #9a9a9a;">{{ text_cc_number }}</label>
+              {% if user_masked_data.cc_no is not empty %}
+              <input type="text" id="input-novalnet-cc-card-no" value="{{ user_masked_data.cc_no }}" readonly="readonly" class="form-control">
+              {% else %}
+                <input type="text" value="" class="form-control" readonly="readonly">
+              {% endif %}
+            </div>
+            <div class="form-group" style="padding:1px 15px;">
+              <label class="control-label" for="input-novalnet-cc-expiry-date" style="text-transform: uppercase; font-size: 12; font-family: sans-serif; color: #9a9a9a;">{{ text_cc_expiry_date }}</label>
+              {% if user_masked_data.cc_exp_month is not empty and  user_masked_data.cc_exp_year is not empty  %}
+              <input type="text" id="input-novalnet-cc-expiry-date" value="{{ user_masked_data.cc_exp_month }} / {{ user_masked_data.cc_exp_year }}" readonly="readonly" class="form-control">
+              {% else %}
+                <input type="text" value="" class="form-control" readonly="readonly">
+              {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        <input type="hidden" id="novalnet-cc-one-click-shopping" name="novalnet_cc_one_click_shopping" value="{{ one_click }}"/>
+        <input type="hidden" id="cc-shopping-type" value="{{ shopping_type }}">
+        <div class="content" id="nn-cc-iframe" style="{{ new_details_style }}">
+            {% if one_click_process_enabled is not empty %}            
+                <a class ="button" id="nn-given-card-link" style="cursor: pointer;">
+                    {{ novalnet_cc_given_card_details }}
+                </a>
+            {% endif %}
+
+            <!-- <script src="https://cdn.novalnet.de/js/v2/NovalnetUtility.js"></script> -->
+            <iframe id = "novalnet-iframe" style="width:100%; border: medium none; "></iframe>
+            <input type="hidden" id="cc-panhash" name="cc_panhash" value="">
+            <input type="hidden" id="cc-unique-id" name="cc_unique_id" value="">
+            <input type="hidden" id="cc-do-redirect" name="cc_do_redirect" value="">
+            <input type="hidden" id="text-cc-holder" value="{{ text_cc_holder }}">
+            <input type="hidden" id="text-cc-holder-placeholder" value="{{ text_cc_card_name }}">
+            <input type="hidden" id="text-cc-number" value="{{ text_cc_number }}">
+            <input type="hidden" id="text-cc-date-placeholder" value="{{ text_cc_date_placeholder }}">
+            <input type="hidden" id="text-cc-number-placeholder" value="{{ text_cc_number_placeholder }}">
+            <input type="hidden" id="text-cc-cvc-placeholder" value="{{ text_cc_cvc_placeholder }}">
+            <input type="hidden" id="text-cc-holder" value="{{ text_cc_holder }}">
+            <input type="hidden" id="text-cc-expiry-date" value="{{ text_cc_expiry_date }}">
+            <input type="hidden" id="text-cc-cvc" value="{{ text_cc_cvc }}">
+            <input type="hidden" id="text-cc-cvc_hint"  value="{{ text_cc_cvc_hint }}">
+            <input type="hidden" id="cc-iframe-standard-label" value="{{ cc_iframe_standard_label }}">
+            <input type="hidden" id="cc-iframe-standard-input" value="{{ cc_iframe_standard_input }}">
+            <input type="hidden" id="text-cc-card-details-error" value="{{ novalnet_cc_payment_details_error }}">
+            <input type="hidden" id="cc-iframe-standard-css-text" value="{{ cc_iframe_standard_css_text }}">
+            <input type="hidden" id="nn-client-key" value="{{ nn_client_key }}">
+            <input type="hidden" id="nn-first-name" value="{{ nn_first_name }}">
+            <input type="hidden" id="nn-last-name" value="{{ nn_last_name }}">
+            <input type="hidden" id="nn-email" value="{{ nn_email }}">
+            <input type="hidden" id="nn-billing-street" value="{{ nn_billing_street }}">
+            <input type="hidden" id="nn-billing-city" value="{{ nn_billing_city }}">
+            <input type="hidden" id="nn-billing-zip" value="{{ nn_billing_zip }}">
+            <input type="hidden" id="nn-billing-country-code" value="{{ nn_billing_country_code }}">
+            <input type="hidden" id="shop-currency" value="{{ shop_currency }}">
+            <input type="hidden" id="transaction-amount" value="{{ transaction_amount }}">
+            <input type="hidden" id="nn-test-mode" value="{{ nn_test_mode }}">
+            <input type="hidden" id="nn-enforce-3d" value="{{ nn_enforce_3d }}">
+            <input type="hidden" id="shop-lang" value="{{ shop_lang }}">
+
+
+            {% if oneclick =='ONE_CLICK' and one_click_desc == 1 %}
+                <input type="checkbox" name="customer_oneclick" id="customer-check">&nbsp  &nbsp<label>{{ save_card_details }}</label>
+            {% endif %}
+        </div>
+    </fieldset>
+</form>
+
+<div class="buttons">
+    <div class="pull-right">
+        <input type="button" value="{{ button_confirm }}" id="button-confirm" class="btn btn-primary" data-loading-text="{{ text_loading }}" />
+        <div class="result" id="result"></div>
+    </div>
+</div>
+
+
+<script src="catalog/view/javascript/novalnet/novalnet_cc.js"></script>
+
+<script type="text/javascript">
+    function confirm()
+    {
+        var form_data = '';
+        if($('#cc-panhash').length > 0) {
+            form_data = $('#cc-panhash, #cc-unique-id, #cc-do-redirect, #novalnet-cc-one-click-shopping,#customer-check');
+        }
+        if($('#customer-check').is(':checked')){
+            $('#customer-check').val('True');
+        } else {
+            $('#customer-check').val('False');
+        }
+        $.ajax({
+            type: 'POST',
+            url: 'index.php?route=extension/payment/novalnet_cc/confirm',
+            data: form_data,
+            dataType: 'json',
+            beforeSend: function() {
+               $('#button-confirm').button('loading');
+            },
+            complete: function() {
+               $('#button-confirm').button('reset');
+            },
+            success: function(data){
+                $('.attention').remove();
+                $('#button-confirm').show();
+
+                if (data['success']) {
+                    location = data['success'];
+                }
+                if (data['error']) {
+                    $('.alert-warning').remove();
+                    $('#payment').before('<div class="alert alert-warning">'+data['error']+'</div>');
+                    $('#payment').show();
+                    $('#button-confirm').removeAttr('disabled');
+                }
+
+                if (data['data_redirect']) {
+                    $('.result').html(data['data_redirect']);
+                    $('#button-confirm').hide();
+                }
+            }
+        });
+    }
+</script>

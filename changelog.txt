@@ -1,0 +1,54 @@
+*** Changelog ***
+
+= 11.5.0 - 2024.07.08 =
+* New - Implemented Online Bank Transfer payment
+* Fix - Compatibility for OpenCart 3.0.3.9
+
+= 11.4.0 - 2021.08.03 =
+*New      - Implemented enforce 3D secure payment for countries outside EU
+*New      - Implemented Payment duration for Prepayment
+*Fix      - For guarantee payments, handled email notification to the end customers on payment confirmation
+*Enhanced - Callback has been optimized as per the new testcase
+*Removed  - PIN by callback and PIN by SMS for Direct Debit SEPA and Invoice payment methods
+*Removed  - BIC field for Direct Debit SEPA
+*Removed  - Proxy server configuration
+*Removed  - Gateway timeout configuration
+*Removed  - Referrer Id configuration
+
+= 11.3.1 - 2021.03.23 =
+* Fix       - Chrome Samesite Cookies
+* Enhanced  - Barzahlen payment name and logo
+* Enhanced  - Callback has been optimized as per the new testcase
+* Removed   - href links for the payment logo
+
+= 11.3.0 - 2020.08.14 =
+* New       - Force 3D secure process has been implemented as per predefined filters and settings in the Novalnet Merchant Administration portal
+* New 	    - Custom checkout overlay for Barzahlen
+* New       - Notify end customer for storing Card / Account information
+* New 	    - Guaranteed payment pending status has been implemented
+* New	    - Customized the payment logo
+* Enhanced  - Guaranteed payment minimum amount reduced to 9,99 EUR
+* Enhanced  - Implemented new encryption method for redirect payments
+* Enhanced  - Auto configuration call perform via cURL method 
+* Enhanced  - On-hold transaction configuration has been implemented for Credit Card, Direct Debit SEPA, Direct Debit SEPA with payment guarantee, Invoice, Invoice with payment guarantee and PayPal
+* Enhanced  - Novalnet bank details will be displayed in invoice for on-hold transactions in Invoice, Invoice with payment guarantee and Prepayment
+* Enhanced  - Novalnet Merchant Administration portal link has been updated in shop admin
+* Enhanced  - Callback has been optimized as per the new testcase
+* Enhanced  - Adjusted the payment plugin for IPV6 condition
+* Removed   - Autofill and Payment refill for payment data
+* Removed   - BIC field for Direct Debit SEPA
+* Removed   - Payment reference configuration for Invoice / Prepayment
+* Removed   - Transaction reference in payments
+
+= 11.2.1 - 2017.11.22 =
+* Enhanced - Dynamic IP control applied through domain instead of static IP in vendor script. Actual IP of Novalnet will be extracted in real time from the domain
+
+= 11.2.0 - 2017.11.02 =
+* New  		- Implemented Barzahlen payment method
+* Enhanced  - Merchant Administration Portal link has been updated in shop admin
+* Enhanced  - Optimized vendor script validation
+* Removed   - Refund with account details from shop admin
+* Removed   - Enable debug mode configuration in Merchant script management
+
+= 11.1.0 - 2017.04.27 =
+New release 
