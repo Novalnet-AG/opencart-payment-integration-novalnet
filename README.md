@@ -2,7 +2,7 @@
 Novalnet’s Payment Module for opencart ensures simple and secure integration of payments and payment services for opencart shops, allowing shop owners to automate the entire payment process from checkout till collection. 
 
 ## Requirements 
-Novalnet <a href="https://www.novalnet.de/"> merchant account </a> is required for using this Novalnet Payment Gateway for opencart. The module is available for the 3.0.0.0 - 3.0.3.9 versions in the following languages: EN & DE. 
+Novalnet <a href="https://www.novalnet.de/"> merchant account </a> is required for using this Novalnet Payment Gateway for opencart. The module is available for the 3.0.0.0 - 3.0.4.0 versions in the following languages: EN & DE. 
 
 ## Advanced functions for payment processing
 - Easy configuration of <a href="https://www.novalnet.de/zahlungsabwicklung"> international and local payment methods </a>
