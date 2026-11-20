@@ -1,0 +1,54 @@
+<h3>{{ text_title }} {{ payment_logo }}</h3>
+<p>{{ text_payment_description }}</p>
+	
+	{% if test_mode != "0" %}
+	<p>{{ text_test_mode_description }}</p>
+	{% endif %}
+	
+	{% if buyer_notification is not empty %}    
+		<p>{{ buyer_notification }}</p>
+	{% endif %}
+
+	<div id="notification">
+		<div class="warning" id="error-msg" style="display:none;width:auto;color:red;"></div>
+	</div>
+	
+	<link rel="stylesheet" type="text/css" href="catalog/view/theme/default/stylesheet/novalnet.css" />
+
+	<div class="buttons">
+		<div class="pull-right">
+			<input type="button" value="{{ button_confirm }}" id="button-confirm" class="btn btn-primary" data-loading-text="{{ text_loading }}" />
+		</div>
+	</div>
+	
+<script type="text/javascript">
+    $('#button-confirm').one('click', function() {
+        $('.alert-warning').remove();
+        $('#button-confirm').attr("disabled", true);
+        $.ajax({
+            type: 'POST',
+            url: 'index.php?route=extension/payment/novalnet_prepayment/confirm',
+            data: '',
+            dataType: 'json',
+            beforeSend: function() {
+                $('#button-confirm').button('loading');
+            },
+            complete: function() {
+               $('#button-confirm').button('reset');
+            },
+            success: function(data){
+                $('.attention').remove();
+                $('#button-confirm').show();
+
+                if (data['success']) {
+                    location = data['success'];
+                }
+                if (data['error']) {
+                    $('#error-msg').html(data['error']);
+                    $('#error-msg').show();
+                    $('#button-confirm').removeAttr('disabled');
+                }
+            }
+        });
+    });
+</script>

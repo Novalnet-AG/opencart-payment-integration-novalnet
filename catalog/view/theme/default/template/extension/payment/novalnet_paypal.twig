@@ -1,0 +1,58 @@
+<form class="form-horizontal">
+    <fieldset id="payment">
+        <h3>{{ text_title }} {{ payment_logo }}</h3>
+
+        <div id="paypal-redirect-desc">
+            <p>{{ text_paypal_payment_description }}</p>
+        </div>
+
+        {% if test_mode != "0" %}
+            <p>{{ text_test_mode_description }}</p>
+        {% endif %}
+
+        {% if buyer_notification is not empty %}
+            <p> {{ buyer_notification }}</p>
+        {% endif %}
+
+        <div id="notification">
+            <div class="warning" id="error-msg" style="display:none;width:auto;"></div>
+        </div>
+    </fieldset>
+</form>
+<div class="buttons">
+    <div class="pull-right">
+        <input type="button" value="{{ button_confirm }}" id="button-confirm" class="btn btn-primary" data-loading-text="{{ text_loading }}" />
+        <div class="result" id="result"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('#button-confirm').on('click', function() {
+        $('.alert-warning').remove();
+        $('#button-confirm').attr("disabled", true);
+        $.ajax({
+            type: 'POST',
+            url: 'index.php?route=extension/payment/novalnet_paypal/confirm',
+            dataType: 'json',
+            beforeSend: function() {
+               $('#button-confirm').button('loading');
+            },
+            complete: function() {
+               $('#button-confirm').button('reset');
+            },
+            success: function (json)
+            {
+                if (json['error']) {
+                    $('#payment').before('<div class="alert alert-warning">'+json['error']+'</div>');
+                    $('#payment').show();
+                }
+                if (json['data_redirect']) {
+                    $('.result').html(json['data_redirect']);
+                    $('#button-confirm').hide();
+                }
+                if (json == null || json['success']) {
+                    location = json['success'];
+                }
+            }
+        });
+    });
+</script>

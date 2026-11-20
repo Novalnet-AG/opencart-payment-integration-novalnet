@@ -1,0 +1,51 @@
+{% if next_subs_cycle  != '0000-00-00' %}
+    <h4 id="novalnet-next-charging-date"><b>{{ text_next_charging_date }} {{ next_subs_cycle }}</b></h4>
+    <div class="buttons clearfix">
+      <div class="pull-left">
+        <button type="button" id="button-cancel" data-loading-text="{{ text_loading }}" class="btn btn-danger">{{ button_subscription_cancel }}</button>
+      </div>
+    </div><br>
+{% endif %}
+
+<h4><b>{{ text_recurring_orders }}</b></h4>
+<div class="panel panel-default">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td>{{ text_novalnet_TID }}</td>
+                <td>{{ text_novalnet_amount }}</td>
+                <td>{{ text_payment_method }}</td>                
+                <td>{{ text_transaction_details }}</td>
+            </tr>
+        </thead>
+        <tbody>
+			{% for value in recurring_details %}
+				<tr>
+					<td>{{ value.tid }}</td>
+                    <td>{{ value.amount }}</td>
+                    <td>{{ payment_method }}</td>
+                    <td>{{ value.transaction_details }}</td>
+				</tr>
+			{% endfor %}            
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+	$(document).delegate('#button-cancel', 'click', function() {
+		$.ajax({
+			url: 'index.php?route=extension/payment/novalnet/recurringCancel&user_token={{ user_token }}',
+			dataType: 'json',
+			data: {'order_recurring_id':'{{ order_recurring_id }}'},
+			beforeSend: function() {
+				$('#button-cancel').button('loading');
+			},
+			success: function(json) {
+				if (json['success']) {
+					$('#content').prepend('<div class="alert alert-danger">' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					$('#button-cancel, #novalnet-next-charging-date').hide();
+					$('html, body').animate({ scrollTop: 0 }, 'slow');
+				}
+			}
+		});
+	});
+</script>

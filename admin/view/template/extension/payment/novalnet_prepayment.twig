@@ -1,0 +1,126 @@
+{{ header }} {{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" id = "form-novalnet-prepayment" form="form-novalnet-prepayment" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+            </div>
+            <h1>{{ novalnet_heading_title }} {{ logo_novalnet_prepayment }}</h1>                                                           
+            <ul class="breadcrumb">
+               {% for breadcrumb in breadcrumbs %}
+               <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+               {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        {% if error_warning %}		
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-novalnet-prepayment" class="form-horizontal">
+                    <div class="tab-content">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-payment-novalnet-prepayment-status">{{ entry_enable_payment }}</label>
+                            <div class="col-sm-10">
+                                <select name="payment_novalnet_prepayment_status" id="input-payment-novalnet-prepayment-status" class="form-control">
+                                    <option value="1" {% if payment_novalnet_prepayment_status == 1 %} selected="selected" {% endif %} >{{ text_enabled }}</option>
+                                    <option value="0" {% if payment_novalnet_prepayment_status == 0 %} selected="selected" {% endif %}>{{ text_disabled }}</option>                                     
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-payment-novalnet-prepayment-test-mode"><span data-toggle="tooltip" title="{{ test_mode_desc }}">{{ enable_test_mode }}</span></label>
+                            <div class="col-sm-10">
+                                <select name="payment_novalnet_prepayment_testmode" id="input-payment-novalnet-prepayment-test-mode" class="form-control">
+                                    <option value="1" {% if payment_novalnet_prepayment_testmode == 1 %}  selected="selected" {% endif %} >{{ text_true }}</option>
+                                    <option value="0"  {% if payment_novalnet_prepayment_testmode == 0 %} selected="selected" {% endif %} >{{ text_false }}</option>                                    
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+							<label class="col-sm-2 control-label" for="input-payment-novalnet-prepayment-due-date"><span data-toggle="tooltip" title="{{ text_prepayment_duedate_desc }}">{{ text_prepayment_duedate }}</span></label>
+							<div class="col-sm-10">
+								{% if payment_novalnet_prepayment_due_date is not empty %}
+								<input type="number" name="payment_novalnet_prepayment_due_date" id="input-payment-novalnet-prepayment-due-date" value="{{ payment_novalnet_prepayment_due_date }}" class="form-control"/>
+								{% else %}
+								<input type="text" name="payment_novalnet_prepayment_due_date" id="input-payment-novalnet-prepayment-due-date" value="" class="form-control"/>
+								{% endif %}
+							</div>
+						</div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-payment-novalnet-prepayment-buyer-notification"><span data-toggle="tooltip" title="{{ notification_buyer_desc }}">{{ notification_buyer }}</span></label>
+                            <div class="col-sm-10">
+                                <textarea name="payment_novalnet_prepayment_buyer_notification" id="input-payment-novalnet-prepayment-buyer-notification" cols="50" rows="2" class="form-control">{{ payment_novalnet_prepayment_buyer_notification }}</textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-payment-novalnet-prepayment-order-completion-status"><span data-toggle="tooltip" title="{{ order_completion_status_desc }}">{{ order_completion_status }}</span></label>
+                            <div class="col-sm-10">
+                             {% if payment_novalnet_prepayment_order_completion_status is empty %}
+                                {% set payment_novalnet_prepayment_order_completion_status = 15 %}
+                                {% endif %}
+                                <select name="payment_novalnet_prepayment_order_completion_status" id="input-payment-novalnet-prepayment-order-completion-status" class="form-control">
+									{% for order_status in order_statuses %}
+									<option value="{{ order_status.order_status_id }}" {% if order_status.order_status_id == payment_novalnet_prepayment_order_completion_status %} selected="selected" {% endif %} >{{ order_status.name }}</option>
+									{% endfor %}                                     
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-payment-novalnet-prepayment-callback-order-status"><span data-toggle="tooltip" title="{{ callback_order_status_desc }}">{{ callback_order_status }} </span></label>
+                            <div class="col-sm-10">
+                            {% if payment_novalnet_prepayment_callback_order_status is empty %}
+                                {% set payment_novalnet_prepayment_callback_order_status = 5 %}
+                                {% endif %}
+                                <select name="payment_novalnet_prepayment_callback_order_status" id="input-payment-novalnet-prepayment-callback-order-status" class="form-control">
+									{% for order_status in order_statuses %}
+									<option value="{{ order_status.order_status_id }}" {% if order_status.order_status_id == payment_novalnet_prepayment_callback_order_status %} selected="selected" {% endif %} >{{ order_status.name }}</option>
+									{% endfor %}                                   
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-payment-novalnet-prepayment-total"><span data-toggle="tooltip" title="{{ entry_minimum_goods_desc }}">{{ entry_minimum_goods }}</span></label>
+                            <div class="col-sm-10">
+                                <input type="text" name="payment_novalnet_prepayment_total" id="input-payment-novalnet-prepayment-total" value="{{ payment_novalnet_prepayment_total }}" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-payment-novalnet-prepayment-geo-zone-id"><span data-toggle="tooltip" title="{{ entry_geo_zone_desc }}">{{ entry_geo_zone }}</span></label>
+                            <div class="col-sm-10">
+                                <select name="payment_novalnet_prepayment_geo_zone_id" id="input-payment-novalnet-prepayment-geo-zone-id" class="form-control">
+                                    <option value="0">{{ text_all_zones }}</option>
+                                    {% for geo_zone in geo_zones %}
+									<option value="{{ geo_zone.geo_zone_id }}" {% if geo_zone.geo_zone_id == payment_novalnet_prepayment_geo_zone_id %}  selected="selected" {% endif %}>{{ geo_zone.name }}</option>
+                                    {% endfor %}                                    
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-payment-novalnet-prepayment-sort-order"><span data-toggle="tooltip" title="{{ entry_sort_order_desc }}">{{ entry_sort_order }}</span></label>
+                            <div class="col-sm-10">
+                                <input type="text" name="payment_novalnet_prepayment_sort_order" id="input-payment-novalnet-prepayment-sort-order" value="{{ payment_novalnet_prepayment_sort_order }}" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+{{ footer }}
+
+<script>
+$('#form-novalnet-prepayment').on('click', function() {
+	 if ($('input[name="payment_novalnet_prepayment_due_date"]').val() != '' && $('input[name="payment_novalnet_prepayment_due_date"]').val() < 7) {
+		alert("Payment due date must be greater than 7 days");
+		$("#form-novalnet-prepayment").valid();
+	}
+    });    
+</script>

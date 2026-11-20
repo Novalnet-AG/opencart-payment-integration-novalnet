@@ -1,0 +1,244 @@
+{{ header }} {{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-novalnet-sepa" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+            </div>
+            <h1>{{ heading_title }} {{ logo_novalnet_sepa }}</h1>                                                            
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+               <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+               {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        {% if error_warning %}		
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-novalnet-sepa" class="form-horizontal">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#tab-configuration" data-toggle="tab">{{ heading_title }}</a></li>
+                        <li><a href="#tab-guarantee-configuration" data-toggle="tab">{{ text_guarantee_payment_configuration }}</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab-configuration">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-status">{{ entry_enable_payment }}</label>
+                                <div class="col-sm-10">
+                                    <select name="payment_novalnet_sepa_status" id="input-payment-novalnet-sepa-status" class="form-control">
+                                        <option value="1" {% if payment_novalnet_sepa_status == 1 %} selected="selected" {% endif %} >{{ text_enabled }}</option>
+										<option value="0" {% if payment_novalnet_sepa_status == 0 %} selected="selected" {% endif %}>{{ text_disabled }}</option>                                         
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-test-mode"><span data-toggle="tooltip" title="{{ test_mode_desc }}">{{ enable_test_mode }}</span></label>
+                                <div class="col-sm-10">
+                                    <select name="payment_novalnet_sepa_testmode" id="input-payment-novalnet-sepa-test-mode" class="form-control">
+                                        <option value="1" {% if payment_novalnet_sepa_testmode == 1 %}  selected="selected" {% endif %} >{{ text_true }}</option>
+										<option value="0" {% if payment_novalnet_sepa_testmode == 0 %} selected="selected" {% endif %} >{{ text_false }}</option>                                         
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-shopping-type"><span data-toggle="tooltip" title="{{ shopping_type_desc }}">{{ shopping_type }}</span></label>
+                                <div class="col-sm-10">
+                                    <select name="payment_novalnet_sepa_shopping_type" id="input-payment-novalnet-sepa-shopping-type" class="form-control">
+                                        <option value="none" {% if payment_novalnet_sepa_shopping_type == 'none' %} selected="selected" {% endif %} >{{ shopping_type_none }}</option>
+                                        <option value="ONE_CLICK" {% if payment_novalnet_sepa_shopping_type == 'ONE_CLICK' %} selected="selected" {% endif %}>{{ one_click_shopping }}</option>
+                                        <option value="ZERO_AMOUNT" {% if payment_novalnet_sepa_shopping_type == 'ZERO_AMOUNT' %} selected="selected" {% endif %}>{{ zero_amount_booking }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-due-date"><span data-toggle="tooltip" title="{{ text_sepa_due_date_desc }}">{{ text_sepa_due_date }}</span></label>
+                                <div class="col-sm-10">
+                                    <input type="number" min="2" max="14" name="payment_novalnet_sepa_due_date" id="input-payment-novalnet-sepa-due-date" value="{{ payment_novalnet_sepa_due_date }}" class="form-control"/>
+                                </div>
+                            </div>
+                             <div class="form-group">
+                               <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-authenticate"><span data-toggle="tooltip" title="{{ onhold_payment_action_desc }}">{{ onhold_payment_action }}</span></label>
+                                <div class="col-sm-10">
+                                    
+                                    <select name="payment_novalnet_sepa_authenticate" id="input-payment-novalnet-authenticate" class="form-control">
+										{% if payment_novalnet_sepa_authenticate == "1" %}	
+											<option value="1" selected="selected">{{ authorize }}</option>
+											<option value="0">{{ capture }}</option>
+										{% else %}
+											<option value="1">Authorized</option>
+											<option value="0" selected="selected">{{ capture }}</option>
+										{% endif %}                                        
+                                    </select>
+                                </div>
+                            </div>
+							<div class="form-group nn_payment_onhold">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-manual-limit"><span data-toggle="tooltip" title="{{ entry_onhold_limit_desc }}">{{ entry_onhold_limit }}</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="input-payment-novalnet-sepa-manual-limit" name="payment_novalnet_sepa_manual_limit" value="{{ payment_novalnet_sepa_manual_limit }}" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-buyer-notification"><span data-toggle="tooltip" title="{{ notification_buyer_desc }}">{{ notification_buyer }}</span></label>
+                                <div class="col-sm-10">
+                                    <textarea name="payment_novalnet_sepa_buyer_notification" id="input-payment-novalnet-sepa-buyer-notification" cols="50" rows="2" class="form-control">{{ payment_novalnet_sepa_buyer_notification }}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-order-completion-status"><span data-toggle="tooltip" title="{{ order_completion_status_desc }}">{{ order_completion_status }}</span></label>
+                                <div class="col-sm-10">
+                                 {% if payment_novalnet_sepa_order_completion_status is empty %}
+                                {% set payment_novalnet_sepa_order_completion_status = 15 %}
+                                {% endif %}
+                                    <select name="payment_novalnet_sepa_order_completion_status" id="input-payment-novalnet-sepa-order-completion-status" class="form-control">
+                                        {% for order_status in order_statuses %}
+                                        <option value="{{ order_status.order_status_id }}" {% if order_status.order_status_id == payment_novalnet_sepa_order_completion_status %} selected="selected" {% endif %} >{{ order_status.name }}</option>
+										{% endfor %}                                          
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-total"><span data-toggle="tooltip" title="{{ entry_minimum_goods_desc }}">{{ entry_minimum_goods }}</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="payment_novalnet_sepa_total" id="input-payment-novalnet-sepa-total" value="{{ payment_novalnet_sepa_total }}" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-geo-zone-id"><span data-toggle="tooltip" title="{{ entry_geo_zone_desc }}">{{ entry_geo_zone }}</span></label>
+                                <div class="col-sm-10">
+                                    <select name="payment_novalnet_sepa_geo_zone_id" id="input-payment-novalnet-sepa-geo-zone-id" class="form-control">
+                                        <option value="0">{{ text_all_zones }}</option>
+                                        {% for geo_zone in geo_zones %}
+                                        <option value="{{ geo_zone.geo_zone_id }}" {% if geo_zone.geo_zone_id == payment_novalnet_sepa_geo_zone_id %}  selected="selected" {% endif %}>{{ geo_zone.name }}</option>
+										{% endfor %}                                          
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-sort-order"><span data-toggle="tooltip" title="{{ entry_sort_order_desc }}">{{ entry_sort_order }}</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="payment_novalnet_sepa_sort_order" id="input-payment-novalnet-sepa-sort-order" value="{{ payment_novalnet_sepa_sort_order }}" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tab-guarantee-configuration">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="text_guarantee_payment_requirements">{{ text_guarantee_payment_requirements }}</label><br/><br/>
+                                <div class="col-sm-10">
+                                    <ul>
+                                        <li>
+                                            {{ text_guarantee_payment_requirements_1 }}
+                                        </li>
+                                        <li>
+                                            {{ text_guarantee_payment_requirements_2 }}
+                                        </li>
+                                        <li>
+                                            {{ text_guarantee_payment_requirements_3 }}
+                                        </li>
+                                        <li>
+                                            {{ text_guarantee_payment_requirements_4 }}
+                                        </li>
+                                        <li>
+                                            {{ text_guarantee_payment_requirements_5 }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-guarantee-payment-enable">{{ text_guarantee_payment_enable }}</label>
+                                <div class="col-sm-10">
+                                    <select name="payment_novalnet_sepa_guarantee_payment_enable" id="input-payment-novalnet-sepa-guarantee-payment-enable" class="form-control">
+										{% if payment_novalnet_sepa_guarantee_payment_enable == "1" %}	
+											<option value="1" selected="selected">{{ text_true }}</option>
+											<option value="0">{{ text_false }}</option>
+										{% else %}
+											<option value="1">{{ text_true }}</option>
+											<option value="0" selected="selected">{{ text_false }}</option>
+										{% endif %}                                        
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group nn_payment_guarantee">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-guarantee-minimum-order-amount"><span data-toggle="tooltip" title="{{ text_guarantee_payment_minimum_order_amount_desc }}">{{ text_guarantee_payment_minimum_order_amount }}</span></label>
+                                <div class="col-sm-10">
+									{% if payment_novalnet_sepa_guarantee_minimum_order_amount is not empty %}
+									<input type="text" name="payment_novalnet_sepa_guarantee_minimum_order_amount" id="input-payment-novalnet-sepa-guarantee-minimum-order-amount" value="{{ payment_novalnet_sepa_guarantee_minimum_order_amount }}" class="form-control"/>
+									{% else %}
+									<input type="text" name="payment_novalnet_sepa_guarantee_minimum_order_amount" id="input-payment-novalnet-sepa-guarantee-minimum-order-amount" value="" class="form-control"/>
+									{% endif %}
+									
+									{% if error_warning and error_warning_id == 'novalnet_sepa_guarantee_minimum_order_amount' %}
+									<div class="text-danger">{{ error_warning }}</div>
+									{% endif %}                                   
+                                </div>
+                            </div>
+                            <div class="form-group nn_payment_guarantee">
+                                <label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-force-non-guarantee-payment"><span data-toggle="tooltip" title="{{ text_guarantee_payment_force_desc }}">{{ text_guarantee_payment_force }}</span></label>
+                                <div class="col-sm-10">
+                                    <select name="payment_novalnet_sepa_guarantee_payment_force" id="input-payment-novalnet-sepa-force-non-guarantee-payment" class="form-control">
+                                        <option value="0" {% if payment_novalnet_sepa_guarantee_payment_force == 0 %} selected="selected" {% endif %}>{{ text_false }}</option>
+                                        
+                                        <option value="1" {% if (payment_novalnet_sepa_guarantee_payment_force == 1 or payment_novalnet_sepa_guarantee_payment_force == '') %} selected="selected" {% endif %} >{{ text_true }}</option>
+                                    </select>
+                                </div>
+                            </div>
+							<div class="form-group nn_payment_guarantee">
+								<label class="col-sm-2 control-label" for="input-payment-novalnet-sepa-guarantee-pending-order-status"><span data-toggle="tooltip" title="{{ guarantee_payment_pending_status_desc }}">{{ guarantee_payment_pending_status }}</label>
+								<div class="col-sm-10">
+								 {% if payment_novalnet_sepa_guarantee_pending_order_status is empty %}
+                                {% set payment_novalnet_sepa_guarantee_pending_order_status = 1 %}
+                                {% endif %}
+									<select name="payment_novalnet_sepa_guarantee_pending_order_status" id="input-payment-novalnet-sepa-guarantee-pending-order-status" class="form-control">
+										{% for order_status in order_statuses %}
+										<option value="{{ order_status.order_status_id }}" {% if order_status.order_status_id == payment_novalnet_sepa_guarantee_pending_order_status %} selected="selected" {% endif %} >{{ order_status.name }}</option>
+										{% endfor %}                                     
+									</select>
+								</div>
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+{{ footer }}
+<script>
+    $(document).ready(function(){    
+        payment_guarantee();
+        
+        $('select[name="payment_novalnet_sepa_guarantee_payment_enable"]').change(function(){
+            payment_guarantee();
+        });
+        
+    });
+    function payment_guarantee(){
+        if($('select[name="payment_novalnet_sepa_guarantee_payment_enable"] option:selected').val() == 1){
+            $('.nn_payment_guarantee').show();
+        } else {
+            $('.nn_payment_guarantee').hide();
+        }
+    }
+    $(document).ready(function(){    
+    
+       nn_payment_onhold();
+        
+        $('select[name="payment_novalnet_sepa_authenticate"]').change(function(){
+            nn_payment_onhold();
+        });
+    });
+    function nn_payment_onhold(){
+    if($('select[name="payment_novalnet_sepa_authenticate"] option:selected').val() == 1){
+            $('.nn_payment_onhold').show();
+        } else {
+            $('.nn_payment_onhold').hide();
+        }
+    }
+</script>
